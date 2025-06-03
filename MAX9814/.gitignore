@@ -12,6 +12,6 @@ sdkconfig.local
 *.a
 
 # Archivos temporales 
-.vscode
+.vscode/
 *.DS_Store
 Thumbs.db
