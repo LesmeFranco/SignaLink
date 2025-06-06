@@ -1,0 +1,2 @@
+/Users/lorenzo.poggi/Documents/gatt_client/build/CMakeFiles/edit_cache.dir
+/Users/lorenzo.poggi/Documents/gatt_client/build/CMakeFiles/rebuild_cache.dir
