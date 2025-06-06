@@ -43,8 +43,11 @@ void app_main(void)
     {
         int val = 0;
         adc_oneshot_read(adc1_handle, ADC_CHANNEL, &val);
-        uint16_t sample = (uint16_t)val;
-        uart_write_bytes(UART_PORT_NUM, (const char *)&sample, 2);
+
+        // Enviar el valor como texto por UART
+        char buffer[16];
+        int len = snprintf(buffer, sizeof(buffer), "%d\n", val);
+        uart_write_bytes(UART_PORT_NUM, buffer, len);
 
         // (Opcional) Imprimir en consola
         printf("ADC: %d\n", val);
