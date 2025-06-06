@@ -42,16 +42,20 @@ void app_main(void)
     while (1)
     {
         int val = 0;
-        adc_oneshot_read(adc1_handle, ADC_CHANNEL, &val);
+        for (uint32_t i = 0; i < 1000; i++)
+        {
+            // Leer el valor del ADC
+            adc_oneshot_read(adc1_handle, ADC_CHANNEL, &val);
 
-        // Enviar el valor como texto por UART
-        char buffer[16];
-        int len = snprintf(buffer, sizeof(buffer), "%d\n", val);
-        uart_write_bytes(UART_PORT_NUM, buffer, len);
+            char buffer[16];
+            int len = snprintf(buffer, sizeof(buffer), "%d\n", val);
+            uart_write_bytes(UART_PORT_NUM, buffer, len);
 
-        // (Opcional) Imprimir en consola
-        printf("ADC: %d\n", val);
+            // (Opcional) Imprimir en consola
+            printf("%d\n", val);
 
-        ets_delay_us(62);
+            ets_delay_us(62);
+        }
+        return;
     }
 }

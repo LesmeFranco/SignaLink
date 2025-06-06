@@ -6,5 +6,8 @@
     "idf.customExtraVars": {
         "IDF_TARGET": "esp32c3"
     },
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "idf.espIdfPathWin": "C:\\Users\\ferna\\ESP-IDF\\v5.4.1\\esp-idf",
+    "idf.toolsPathWin": "C:\\Users\\ferna\\.espressif",
+    "idf.pythonInstallPath": "C:\\Users\\ferna\\.espressif\\tools\\idf-python\\3.11.2\\python.exe"
 }
