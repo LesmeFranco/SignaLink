@@ -81,7 +81,7 @@ void app_main(void)
 
         // Estados individuales
         const char* estado_0 = "";
-        if (R_flex_0 < 18000) {
+        if (R_flex_0 < 17500) {
             estado_0 = "muy flexionado";
         } else if (R_flex_0 < 21000) {
             estado_0 = "medio";
@@ -123,8 +123,8 @@ void app_main(void)
         }
 
         printf("S0: ADC %d | Vout %.3f V | R %.1f Ω | %s || S1: ADC %d | Vout %.3f V | R %.1f Ω | %s || Frase: %s\n",
-            adc_raw_0, voltage_0, R_flex_0, estado_0,
-            adc_raw_1, voltage_1, R_flex_1, estado_1,
+            adc_raw_0_avg, voltage_0, R_flex_0, estado_0,
+            adc_raw_1_avg, voltage_1, R_flex_1, estado_1,
             frase);
 
         vTaskDelay(pdMS_TO_TICKS(500));
