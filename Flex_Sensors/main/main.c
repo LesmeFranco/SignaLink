@@ -1,95 +1,132 @@
 #include <stdio.h>
-#include "driver/gpio.h"
-#include "driver/adc.h"
-#include "esp_adc/adc_oneshot.h"
+#include <string.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_adc/adc_oneshot.h"
+#include "esp_adc/adc_cali.h"
+#include "esp_adc/adc_cali_scheme.h"
 
-#define SENSOR_PIN ADC_CHANNEL_0
-#define LED5_GPIO 5
-#define LED6_GPIO 6
-#define LED7_GPIO 7
-#define LED8_GPIO 8
-#define LED9_GPIO 9
-
-float VCC = 5;
-float R2 = 10000;
-float sensorMinResistance = 1000;
-float sensorMaxResistance = 30000;
-
-long map(long x, long in_min, long in_max, long out_min, long out_max)
-{
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+// Configuración
+#define ADC_CHANNEL_0   ADC_CHANNEL_0 // GPIO0
+#define ADC_CHANNEL_1   ADC_CHANNEL_1 // GPIO1
+#define ADC_UNIT        ADC_UNIT_1
+#define R_FIXED         16000.0 // Ohmios (resistencia fija)
+#define VCC             3.3
+#define N 8 // Número de muestras para el promedio
 
 void app_main(void)
 {
-    // Configura los GPIO como salida
-    gpio_config_t io_conf = {
-        .mode = GPIO_MODE_OUTPUT,
-        .pin_bit_mask = (1ULL << LED5_GPIO) | (1ULL << LED6_GPIO) | (1ULL << LED7_GPIO) | (1ULL << LED8_GPIO) | (1ULL << LED9_GPIO),
-        .pull_down_en = 0,
-        .pull_up_en = 0,
-        .intr_type = GPIO_INTR_DISABLE};
-    gpio_config(&io_conf);
-
-    // Configura el ADC Oneshot
+    // Configuración ADC oneshot
     adc_oneshot_unit_handle_t adc_handle;
-    adc_oneshot_unit_init_cfg_t init_cfg = {
-        .unit_id = ADC_UNIT_1,
+    adc_oneshot_unit_init_cfg_t init_config = {
+        .unit_id = ADC_UNIT,
     };
-    adc_oneshot_new_unit(&init_cfg, &adc_handle);
+    adc_oneshot_new_unit(&init_config, &adc_handle);
 
-    adc_oneshot_chan_cfg_t chan_cfg = {
-        .atten = ADC_ATTEN_DB_11,
+    adc_oneshot_chan_cfg_t config = {
+        .atten = ADC_ATTEN_DB_12,
         .bitwidth = ADC_BITWIDTH_12,
     };
-    adc_oneshot_config_channel(adc_handle, SENSOR_PIN, &chan_cfg);
+    adc_oneshot_config_channel(adc_handle, ADC_CHANNEL_0, &config);
+    adc_oneshot_config_channel(adc_handle, ADC_CHANNEL_1, &config);
 
-    while (1)
-    {
-        int ADCRaw = 0;
-        adc_oneshot_read(adc_handle, SENSOR_PIN, &ADCRaw);
-        float ADCVoltage = (ADCRaw * VCC) / 4095.0;
-        float Resistance = R2 * (VCC / ADCVoltage - 1);
-        uint8_t ReadValue = map(Resistance, sensorMinResistance, sensorMaxResistance, 0, 100);
+    // Calibración (nuevo esquema) para ambos canales
+    adc_cali_handle_t cali_handle_0 = NULL;
+    adc_cali_curve_fitting_config_t cali_config_0 = {
+        .unit_id = ADC_UNIT,
+        .chan = ADC_CHANNEL_0,
+        .atten = ADC_ATTEN_DB_12,
+        .bitwidth = ADC_BITWIDTH_12,
+    };
+    adc_cali_create_scheme_curve_fitting(&cali_config_0, &cali_handle_0);
 
-        gpio_set_level(LED5_GPIO, 0);
-        gpio_set_level(LED6_GPIO, 0);
-        gpio_set_level(LED7_GPIO, 0);
-        gpio_set_level(LED8_GPIO, 0);
-        gpio_set_level(LED9_GPIO, 0);
+    adc_cali_handle_t cali_handle_1 = NULL;
+    adc_cali_curve_fitting_config_t cali_config_1 = {
+        .unit_id = ADC_UNIT,
+        .chan = ADC_CHANNEL_1,
+        .atten = ADC_ATTEN_DB_12,
+        .bitwidth = ADC_BITWIDTH_12,
+    };
+    adc_cali_create_scheme_curve_fitting(&cali_config_1, &cali_handle_1);
 
-        if (ReadValue < 20)
-        {
-            gpio_set_level(LED5_GPIO, 1);
+    while (1) {
+        // Promedio para Sensor 0
+        int sum_adc_0 = 0;
+        for (int i = 0; i < N; i++) {
+            int adc_raw_0 = 0;
+            adc_oneshot_read(adc_handle, ADC_CHANNEL_0, &adc_raw_0);
+            sum_adc_0 += adc_raw_0;
+            vTaskDelay(pdMS_TO_TICKS(5)); // Pequeña pausa entre muestras
         }
-        else if (ReadValue < 40)
-        {
-            gpio_set_level(LED5_GPIO, 1);
-            gpio_set_level(LED6_GPIO, 1);
+        int adc_raw_0_avg = sum_adc_0 / N;
+        int voltage_mv_0 = 0;
+        adc_cali_raw_to_voltage(cali_handle_0, adc_raw_0_avg, &voltage_mv_0);
+        float voltage_0 = voltage_mv_0 / 1000.0f;
+        float R_flex_0 = R_FIXED * (VCC / voltage_0 - 1.0);
+
+        // Promedio para Sensor 1
+        int sum_adc_1 = 0;
+        for (int i = 0; i < N; i++) {
+            int adc_raw_1 = 0;
+            adc_oneshot_read(adc_handle, ADC_CHANNEL_1, &adc_raw_1);
+            sum_adc_1 += adc_raw_1;
+            vTaskDelay(pdMS_TO_TICKS(5));
         }
-        else if (ReadValue < 60)
-        {
-            gpio_set_level(LED5_GPIO, 1);
-            gpio_set_level(LED6_GPIO, 1);
-            gpio_set_level(LED7_GPIO, 1);
+        int adc_raw_1_avg = sum_adc_1 / N;
+        int voltage_mv_1 = 0;
+        adc_cali_raw_to_voltage(cali_handle_1, adc_raw_1_avg, &voltage_mv_1);
+        float voltage_1 = voltage_mv_1 / 1000.0f;
+        float R_flex_1 = R_FIXED * (VCC / voltage_1 - 1.0);
+
+        // Estados individuales
+        const char* estado_0 = "";
+        if (R_flex_0 < 18000) {
+            estado_0 = "muy flexionado";
+        } else if (R_flex_0 < 21000) {
+            estado_0 = "medio";
+        } else {
+            estado_0 = "recto";
         }
-        else if (ReadValue < 80)
-        {
-            gpio_set_level(LED5_GPIO, 1);
-            gpio_set_level(LED6_GPIO, 1);
-            gpio_set_level(LED7_GPIO, 1);
-            gpio_set_level(LED8_GPIO, 1);
+
+        const char* estado_1 = "";
+        if (R_flex_1 < 18000) {
+            estado_1 = "muy flexionado";
+        } else if (R_flex_1 < 21000) {
+            estado_1 = "medio";
+        } else {
+            estado_1 = "recto";
         }
-        else
-        {
-            gpio_set_level(LED5_GPIO, 1);
-            gpio_set_level(LED6_GPIO, 1);
-            gpio_set_level(LED7_GPIO, 1);
-            gpio_set_level(LED8_GPIO, 1);
-            gpio_set_level(LED9_GPIO, 1);
+
+        // Frase combinada
+        const char* frase = "";
+        if (strcmp(estado_0, "recto") == 0 && strcmp(estado_1, "recto") == 0) {
+            frase = "Ambos rectos";
+        } else if (strcmp(estado_0, "muy flexionado") == 0 && strcmp(estado_1, "muy flexionado") == 0) {
+            frase = "Ambos muy flexionados";
+        } else if (strcmp(estado_0, "medio") == 0 && strcmp(estado_1, "medio") == 0) {
+            frase = "Ambos medio";
+        } else if (strcmp(estado_0, "recto") == 0 && strcmp(estado_1, "muy flexionado") == 0) {
+            frase = "Sensor 0 recto, Sensor 1 muy flexionado";
+        } else if (strcmp(estado_0, "muy flexionado") == 0 && strcmp(estado_1, "recto") == 0) {
+            frase = "Sensor 0 muy flexionado, Sensor 1 recto";
+        } else if (strcmp(estado_0, "medio") == 0 && strcmp(estado_1, "recto") == 0) {
+            frase = "Sensor 0 medio, Sensor 1 recto";
+        } else if (strcmp(estado_0, "recto") == 0 && strcmp(estado_1, "medio") == 0) {
+            frase = "Sensor 0 recto, Sensor 1 medio";
+        } else if (strcmp(estado_0, "medio") == 0 && strcmp(estado_1, "muy flexionado") == 0) {
+            frase = "Sensor 0 medio, Sensor 1 muy flexionado";
+        } else if (strcmp(estado_0, "muy flexionado") == 0 && strcmp(estado_1, "medio") == 0) {
+            frase = "Sensor 0 muy flexionado, Sensor 1 medio";
+        } else {
+            frase = "Combinación diferente";
         }
-        vTaskDelay(pdMS_TO_TICKS(100));
+
+        printf("S0: ADC %d | Vout %.3f V | R %.1f Ω | %s || S1: ADC %d | Vout %.3f V | R %.1f Ω | %s || Frase: %s\n",
+            adc_raw_0, voltage_0, R_flex_0, estado_0,
+            adc_raw_1, voltage_1, R_flex_1, estado_1,
+            frase);
+
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
