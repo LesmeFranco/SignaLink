@@ -59,4 +59,7 @@ A continuación, algunos renders del modelo final en distintas vistas:
   <img src="images/foto3.jpeg" width="350" alt="Despiece del prototipo"/>
 </div>
 
+<div align="center">
+  <img src="./images/foto.jpeg" width="350" alt="Vista frontal del prototipo"/>
+</div>
 
