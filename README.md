@@ -55,4 +55,4 @@ A continuación, algunos renders del modelo final en distintas vistas:
 
   <img src="images/WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="400" alt="Foto 2"/>
   <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="400" alt="Foto 3"/>
-  <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="400" alt="Foto 3"/>
+  <img src="images/WhatsApp Image 2025-06-11 at 2.20.09 PM.jpeg" width="400" alt="Foto 3"/>
