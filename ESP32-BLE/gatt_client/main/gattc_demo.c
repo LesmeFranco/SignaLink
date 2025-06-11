@@ -1,20 +1,3 @@
-/*
- * SPDX-FileCopyrightText: 2021-2024 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: Unlicense OR CC0-1.0
- */
-
-
-
-/****************************************************************************
-*
-* This demo showcases BLE GATT client. It can scan BLE devices and connect to one device.
-* Run the gatt_server demo, the client demo will automatically connect to the gatt_server demo.
-* Client demo will enable gatt_server's notify after connection. The two devices will then exchange
-* data.
-*
-****************************************************************************/
-
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
@@ -275,6 +258,8 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
             ESP_LOGI(GATTC_TAG, "Indication received");
         }
         ESP_LOG_BUFFER_HEX(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
+        // Lectura en palabras
+        ESP_LOGI(GATTC_TAG, "Mensaje recibido: %.*s", p_data->notify.value_len, (char*)p_data->notify.value);
         break;
     case ESP_GATTC_WRITE_DESCR_EVT:
         if (p_data->write.status != ESP_GATT_OK){
@@ -516,24 +501,4 @@ void app_main(void)
     if (local_mtu_ret){
         ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
-
-
-    /*
-    * This code is intended for debugging and prints all HCI data.
-    * To enable it, turn on the "BT_HCI_LOG_DEBUG_EN" configuration option.
-    * The output HCI data can be parsed using the script:
-    * esp-idf/tools/bt/bt_hci_to_btsnoop.py.
-    * For detailed instructions, refer to esp-idf/tools/bt/README.md.
-    */
-
-    /*
-    while (1) {
-        extern void bt_hci_log_hci_data_show(void);
-        extern void bt_hci_log_hci_adv_show(void);
-        bt_hci_log_hci_data_show();
-        bt_hci_log_hci_adv_show();
-        vTaskDelay(1000 / portNUM_PROCESSORS);
-    }
-    */
-
 }

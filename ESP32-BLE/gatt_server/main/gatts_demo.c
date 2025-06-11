@@ -1,3 +1,6 @@
+// CODIGO BLE FUNCIONAL CON SENSADO DE LOS GESTOS DE LA MANO.
+// El servidor se inicia, el cliente (celular) entra a este servidor del ESP32 y cuando activa las notificaciones este puede ver el sensado de los valores en hexadecimal, mientras que en el monitor serie se ve que movmiento es.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -159,9 +162,9 @@ static prepare_type_env_t b_prepare_write_env;
 #define THRESHOLD_X_LEFT 330.0f
 #define THRESHOLD_Y_FORWARD 45.0f
 #define THRESHOLD_Y_BACKWARD 315.0f
-#define THRESHOLD_Z_90 90.0f
-#define THRESHOLD_Z_180 180.0f
-#define THRESHOLD_Z_270 270.0f
+#define THRESHOLD_Z_90 45.0f
+#define THRESHOLD_Z_180 135.0f
+#define THRESHOLD_Z_270 225.0f
 
 static const char *MPU_TAG = "MPU6050";
 
@@ -183,6 +186,7 @@ static bool msg_y_backward_triggered = false;
 static bool msg_z_90_triggered = false;
 static bool msg_z_180_triggered = false;
 static bool msg_z_270_triggered = false;
+static bool mpu_task_started = false;
 
 // Handles BLE para notificaciones
 static esp_gatt_if_t mpu_gatts_if = 0;
@@ -282,19 +286,16 @@ static void get_sensor_data(float *accel_x_g, float *accel_y_g, float *accel_z_g
     *angle_z_deg = current_yaw;
 }
 
-// --- Tarea FreeRTOS para sensar y notificar gestos ---
 static void mpu6050_task(void *arg) {
     float ax, ay, az, gx, gy, gz, ang_x, ang_y, ang_z;
     last_time_us = esp_timer_get_time();
     while (1) {
-        get_sensor_data(&ax, &ay, &az, &gx, &gy, &gz, &ang_x, &ang_y, &ang_z);
-
-        ESP_LOGI(MPU_TAG, "Datos: ax=%.2f ay=%.2f az=%.2f ang_x=%.2f ang_y=%.2f ang_z=%.2f", ax, ay, az, ang_x, ang_y, ang_z);
-
-
         char notify_msg[32] = {0};
         bool send = false;
 
+        get_sensor_data(&ax, &ay, &az, &gx, &gy, &gz, &ang_x, &ang_y, &ang_z);
+
+        // --- LÓGICA DE GESTOS (NO TOCAR, ya está bien) ---
         bool is_x_centered = (ang_x <= THRESHOLD_CENTERED_RANGE || ang_x >= (360.0f - THRESHOLD_CENTERED_RANGE));
         bool is_y_centered = (ang_y >= (180.0f - THRESHOLD_CENTERED_RANGE) && ang_y <= (180.0f + THRESHOLD_CENTERED_RANGE));
         if (is_x_centered && is_y_centered) {
@@ -330,6 +331,7 @@ static void mpu6050_task(void *arg) {
         }
 
         if (!msg_hand_centered_triggered && !msg_hand_reverse_triggered) {
+            // Solo activar lateral si no está centrada ni al revés
             if (ang_x >= THRESHOLD_X_RIGHT && ang_x < 180.0f) {
                 if (!msg_x_right_triggered) {
                     strcpy(notify_msg, "MANO_IZQUIERDA");
@@ -348,6 +350,7 @@ static void mpu6050_task(void *arg) {
             } else {
                 msg_x_left_triggered = false;
             }
+            // Solo activar adelante/atrás si no está centrada ni al revés
             if (ang_y >= THRESHOLD_Y_FORWARD && ang_y < 180.0f) {
                 if (!msg_y_forward_triggered) {
                     strcpy(notify_msg, "MANO_ADELANTE");
@@ -397,9 +400,10 @@ static void mpu6050_task(void *arg) {
             msg_z_270_triggered = false;
         }
 
-        // Enviar notificación BLE si corresponde
-        if (send && mpu_gatts_if && mpu_conn_id && mpu_char_handle) {
-            esp_ble_gatts_send_indicate(
+        // --- ENVÍO BLE SOLO SI SE DETECTA GESTO ---
+        if (send && mpu_gatts_if != 0 && mpu_char_handle != 0) {
+            ESP_LOGI(MPU_TAG, "Gesto detectado: %s", notify_msg);
+            esp_err_t err = esp_ble_gatts_send_indicate(
                 mpu_gatts_if,
                 mpu_conn_id,
                 mpu_char_handle,
@@ -407,10 +411,11 @@ static void mpu6050_task(void *arg) {
                 (uint8_t*)notify_msg,
                 false
             );
-            ESP_LOGI(MPU_TAG, "Notificado BLE: %s", notify_msg);
+            ESP_LOGI(MPU_TAG, "Notificado BLE: %s, err=%d", notify_msg, err);
+            send = false; // IMPORTANTE: resetea para no notificar en cada ciclo
         }
 
-        vTaskDelay(pdMS_TO_TICKS(2000)); 
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
 
@@ -491,6 +496,8 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         esp_ble_gatts_add_char_descr(gl_profile_tab[PROFILE_A_APP_ID].service_handle, &gl_profile_tab[PROFILE_A_APP_ID].descr_uuid,
                                      ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, NULL, NULL);
         mpu_char_handle = param->add_char.attr_handle; // Para notificaciones MPU6050
+
+        // Crea la tarea si ya hay conexión BLE y aún no se creó
         break;
     case ESP_GATTS_ADD_CHAR_DESCR_EVT:
         gl_profile_tab[PROFILE_A_APP_ID].descr_handle = param->add_char_descr.attr_handle;
@@ -624,5 +631,8 @@ void app_main(void)
     calibrate_mpu6050(500);
 
     // === CREA LA TAREA DE SENSADO Y NOTIFICACIÓN ===
-    xTaskCreate(mpu6050_task, "mpu6050_task", 4096, NULL, 5, NULL);
+    if (!mpu_task_started) {
+        xTaskCreate(mpu6050_task, "mpu6050_task", 4096, NULL, 5, NULL);
+        mpu_task_started = true;
+    }
 }
