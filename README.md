@@ -54,10 +54,9 @@ Para aprender lo básico de Blender, seguimos una serie de tutoriales introducto
 A continuación, algunos renders del modelo final en distintas vistas:
 
 <div align="center">
-  <img src="./images/foto.jpeg" width="350" alt="Foto 3"/>
 
 </div>
 
-  <img src="./images/foto2.jpeg" width="350" alt="Foto 2"/>
-  <img src="./images/foto3.jpeg" width="350" alt="Foto 3"/>
-
+  <img src="images/WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="350" alt="Foto 2"/>
+  <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="350" alt="Foto 3"/>
+  <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="350" alt="Foto 3"/>
