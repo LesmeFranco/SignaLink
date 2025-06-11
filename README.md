@@ -38,7 +38,15 @@ Para aprender lo básico de Blender, seguimos una serie de tutoriales introducto
 - Usar modificadores como *Subdivision Surface* y *Mirror*.
 - Exportar renders.
 
-### Videos recomendados
+## 🖼️ Galería 
+
+A continuación, algunos renders del modelo final en distintas vistas:
+
+  <img src="images/WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="400" alt="Foto 2"/>
+  <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="400" alt="Foto 3"/>
+  <img src="images/WhatsApp Image 2025-06-11 at 2.20.09 PM.jpeg" width="400" alt="Foto 3"/>
+
+### Videos de referencia durante el trabajo
 
 | Título | Enlace | Duración |
 |-------|--------|----------|
@@ -48,11 +56,3 @@ Para aprender lo básico de Blender, seguimos una serie de tutoriales introducto
 | 🛠️ *Tips de modelado para principiantes* | [Ver en YouTube](https://www.youtube.com/watch?v=VT5oZndzj68) | 10 min |
 | 🔎 *Prototipo de referencia* | [Investigar](https://media.printables.com/media/prints/870468/images/6681673_e2a866c6-d7e2-4e5e-ad4a-73e39c4378fc_fca40cd5-8bfa-4422-a103-33a75f017ac9/thumbs/inside/1280x960/jpg/make-me-2024_usprawnianie-malej-motoryki-projekt-ortezy-w-technologii-druku-3d-fdm-wspomagajacej-rehabilitacje-osob-ze-spastycznoscia-dloni_1.webp) | 30 min |
 ---
-
-## 🖼️ Galería de renders
-
-A continuación, algunos renders del modelo final en distintas vistas:
-
-  <img src="images/WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="400" alt="Foto 2"/>
-  <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="400" alt="Foto 3"/>
-  <img src="images/WhatsApp Image 2025-06-11 at 2.20.09 PM.jpeg" width="400" alt="Foto 3"/>
