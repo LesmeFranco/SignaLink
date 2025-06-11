@@ -242,10 +242,14 @@ void app_main(void) {
         if (strcmp(estado_3, "maximo") == 0) maximos++;
         if (strcmp(estado_4, "maximo") == 0) maximos++;
 
-        // Generar la frase combinada
-    
         // Decide la frase principal
-        if (rectos == 5) {
+        if (strcmp(estado_0, "muy flexionado") == 0 &&
+            strcmp(estado_1, "muy flexionado") == 0 &&
+            strcmp(estado_3, "muy flexionado") == 0 &&
+            strcmp(estado_4, "muy flexionado") == 0 &&
+            strcmp(estado_2, "muy flexionado") == 0) {
+            frase = "A";
+        } else if (rectos == 5) {
             frase = "Todos rectos";
         } else if (muy_flexionados == 5) {
             frase = "Todos muy flexionados";
