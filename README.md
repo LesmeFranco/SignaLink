@@ -54,7 +54,7 @@ Para aprender lo básico de Blender, seguimos una serie de tutoriales introducto
 A continuación, algunos renders del modelo final en distintas vistas:
 
 <div align="center">
-  <img src="C:\Users\DELL\Downloads\WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="350" alt="Vista frontal del prototipo"/>
+  <img src="\Downloads\WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="350" alt="Vista frontal del prototipo"/>
   <img src="./renders/vista-superior.png" width="350" alt="Vista superior del prototipo"/>
   <img src="./renders/despiece.png" width="350" alt="Despiece del prototipo"/>
 </div>
