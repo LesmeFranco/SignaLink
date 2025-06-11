@@ -23,7 +23,7 @@ Diseñar un modelo tridimensional que represente de forma realista y funcional e
 5. **Renderizado final**: configuración de luces, cámara y fondo neutro para presentación.
 
 <div align="center">
-  <img src="[https://www.stanfordchildrens.org/content-public/topic/images/97/126197.gif" alt="Descripción de la imagen" width="400"/>
+  <img src="https://www.stanfordchildrens.org/content-public/topic/images/97/126197.gif" alt="Descripción de la imagen" width="400"/>
 </div>
 
  
