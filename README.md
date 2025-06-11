@@ -54,7 +54,7 @@ Para aprender lo básico de Blender, seguimos una serie de tutoriales introducto
 A continuación, algunos renders del modelo final en distintas vistas:
 
 <div align="center">
-  <img src=./images/foto.jpeg" width="350" alt="Vista frontal del prototipo"/>
+  <img src="./images/foto.jpeg" width="350" alt="Vista frontal del prototipo"/>
   <img src="./images/foto2.jpeg" width="350" alt="Vista superior del prototipo"/>
   <img src="images/foto3.jpeg" width="350" alt="Despiece del prototipo"/>
 </div>
