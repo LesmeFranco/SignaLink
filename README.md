@@ -22,7 +22,8 @@ Diseñar un modelo tridimensional que represente de forma realista y funcional e
 4. **Texturizado y materiales**: aplicación de colores básicos para visualización.
 5. **Renderizado final**: configuración de luces, cámara y fondo neutro para presentación.
 
- <img src="https://www.stanfordchildrens.org/content-public/topic/images/97/126197.gif" width="350" alt="Vista frontal del prototipo"/>
+  <img src="https://www.stanfordchildrens.org/content-public/topic/images/97/126197.gif" width="350" alt="Vista frontal del prototipo"/>
+ 
 ---
 
 ## 🎥 Recursos de aprendizaje
