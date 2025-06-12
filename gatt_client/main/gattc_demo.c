@@ -23,7 +23,7 @@
 #define PROFILE_A_APP_ID 0
 #define INVALID_HANDLE   0
 
-static char remote_device_name[ESP_BLE_ADV_NAME_LEN_MAX] = "ESP_GATTS_DEMO";
+static char remote_device_name[ESP_BLE_ADV_NAME_LEN_MAX] = "ESP_CLIENT";
 static bool connect    = false;
 static bool get_server = false;
 static esp_gattc_char_elem_t *char_elem_result   = NULL;
