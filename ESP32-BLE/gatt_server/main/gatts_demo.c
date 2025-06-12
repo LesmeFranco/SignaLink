@@ -1,4 +1,4 @@
-// CODIGO BLE FUNCIONAL CON SENSADO DE LOS GESTOS DE LA MANO.
+// CODIGO BLE FUNCIONAL CON SENSADO DE LOS GESTOS DE LA MANO y SENSORES FLEX.
 // El servidor se inicia, el cliente (celular) entra a este servidor del ESP32 y cuando activa las notificaciones este puede ver el sensado de los valores en hexadecimal, mientras que en el monitor serie se ve que movmiento es.
 
 #include <stdio.h>
@@ -24,6 +24,10 @@
 #include "esp_gatt_common_api.h"
 #include "sdkconfig.h"
 
+#include "esp_adc/adc_oneshot.h"
+#include "esp_adc/adc_cali.h"
+#include "esp_adc/adc_cali_scheme.h"
+
 #define GATTS_TAG "GATTS_DEMO"
 
 #define GATTS_SERVICE_UUID_TEST_A   0x00FF
@@ -36,6 +40,18 @@
 #define GATTS_DESCR_UUID_TEST_B     0x2222
 #define GATTS_NUM_HANDLE_TEST_B     4
 
+#define ADC_UNIT        ADC_UNIT_1
+#define R_FIXED         10000.0
+#define VCC             3.3
+#define N               8
+
+// Canales ADC para cada flex
+#define FLEX0_CHANNEL   ADC_CHANNEL_0
+#define FLEX1_CHANNEL   ADC_CHANNEL_1
+#define FLEX2_CHANNEL   ADC_CHANNEL_2
+#define FLEX3_CHANNEL   ADC_CHANNEL_3
+#define FLEX4_CHANNEL   ADC_CHANNEL_4
+
 static char test_device_name[ESP_BLE_ADV_NAME_LEN_MAX] = "ESP_GATTS_DEMO";
 
 #define TEST_MANUFACTURER_DATA_LEN  17
@@ -45,6 +61,12 @@ static char test_device_name[ESP_BLE_ADV_NAME_LEN_MAX] = "ESP_GATTS_DEMO";
 static uint8_t char1_str[] = {0x11,0x22,0x33};
 static esp_gatt_char_prop_t a_property = 0;
 static esp_gatt_char_prop_t b_property = 0;
+
+static adc_oneshot_unit_handle_t adc_handle;
+static adc_cali_handle_t cali_handle[5];
+
+static char ultimo_gesto[32] = "";
+static char ultimo_estado_flex[5][20] = { "", "", "", "", "" };
 
 static esp_attr_value_t gatts_demo_char1_val =
 {
@@ -286,6 +308,53 @@ static void get_sensor_data(float *accel_x_g, float *accel_y_g, float *accel_z_g
     *angle_z_deg = current_yaw;
 }
 
+static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, char* estado_out, size_t len) {
+    int sum_adc = 0;
+    for (int i = 0; i < N; i++) {
+        int adc_raw = 0;
+        adc_oneshot_read(adc_handle, channel, &adc_raw);
+        sum_adc += adc_raw;
+        vTaskDelay(pdMS_TO_TICKS(2));
+    }
+    int adc_avg = sum_adc / N;
+    int voltage_mv = 0;
+    adc_cali_raw_to_voltage(cali, adc_avg, &voltage_mv);
+    float voltage = voltage_mv / 1000.0f;
+    float R_flex = R_FIXED * (VCC / voltage - 1.0);
+
+    // Clasificación según tu código original
+    if (flex_idx == 4) { // MEÑIQUE
+        if (R_flex < 52000 && R_flex > 45000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 20000 && R_flex < 45000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 52000) strncpy(estado_out, "maximo", len);
+        else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
+        else strncpy(estado_out, "desconocido", len);
+    } else if (flex_idx == 0) { // INDICE
+        if (R_flex < 50000 && R_flex > 37000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 20000 && R_flex < 37000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 50000) strncpy(estado_out, "maximo", len);
+        else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
+        else strncpy(estado_out, "desconocido", len);
+    } else if (flex_idx == 1) { // MAYOR
+        if (R_flex < 40000 && R_flex > 29000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 15000 && R_flex < 29000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 40000) strncpy(estado_out, "maximo", len);
+        else if (R_flex > 11000 && R_flex < 15000) strncpy(estado_out, "recto", len);
+        else strncpy(estado_out, "desconocido", len); 
+    } else if  (flex_idx == 2) { // ANULAR
+        if (R_flex < 9000 && R_flex > 8000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 6000 && R_flex < 8000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 5000 && R_flex < 6000) strncpy(estado_out, "recto", len);
+        else strncpy(estado_out, "desconocido", len);
+    } else if (flex_idx == 3) { // GORDO
+        if (R_flex < 67000 && R_flex > 55000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 20000 && R_flex < 55000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 67000) strncpy(estado_out, "maximo", len);
+        else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
+        else strncpy(estado_out, "desconocido", len);
+    }
+}
+
 static void mpu6050_task(void *arg) {
     float ax, ay, az, gx, gy, gz, ang_x, ang_y, ang_z;
     last_time_us = esp_timer_get_time();
@@ -400,21 +469,49 @@ static void mpu6050_task(void *arg) {
             msg_z_270_triggered = false;
         }
 
-        // --- ENVÍO BLE SOLO SI SE DETECTA GESTO ---
-        if (send && mpu_gatts_if != 0 && mpu_char_handle != 0) {
-            ESP_LOGI(MPU_TAG, "Gesto detectado: %s", notify_msg);
+        char estado_flex[5][20];
+        leer_estado_flex(0, FLEX0_CHANNEL, cali_handle[0], estado_flex[0], sizeof(estado_flex[0]));
+        leer_estado_flex(1, FLEX1_CHANNEL, cali_handle[1], estado_flex[1], sizeof(estado_flex[1]));
+        leer_estado_flex(2, FLEX2_CHANNEL, cali_handle[2], estado_flex[2], sizeof(estado_flex[2]));
+        leer_estado_flex(3, FLEX3_CHANNEL, cali_handle[3], estado_flex[3], sizeof(estado_flex[3]));
+        leer_estado_flex(4, FLEX4_CHANNEL, cali_handle[4], estado_flex[4], sizeof(estado_flex[4]));
+
+        // Detectar si cambió el gesto o algún flex
+        bool flex_cambio = false;
+        for (int i = 0; i < 5; i++) {
+            if (strcmp(estado_flex[i], ultimo_estado_flex[i]) != 0) {
+                flex_cambio = true;
+                break;
+            }
+        }
+        bool gesto_cambio = (strcmp(notify_msg, ultimo_gesto) != 0);
+
+        // Solo enviar si cambió el gesto o algún flex
+        if ((send || flex_cambio) && mpu_gatts_if != 0 && mpu_char_handle != 0) {
+            char mensaje_ble[256];
+            snprintf(mensaje_ble, sizeof(mensaje_ble),
+                "%s | Indice:%s Mayor:%s Anular:%s Gordo:%s Meñique:%s",
+                notify_msg, estado_flex[0], estado_flex[1], estado_flex[2], estado_flex[3], estado_flex[4]);
+
+            ESP_LOGI(MPU_TAG, "Gesto+Flex: %s", mensaje_ble);
+
             esp_err_t err = esp_ble_gatts_send_indicate(
                 mpu_gatts_if,
                 mpu_conn_id,
                 mpu_char_handle,
-                strlen(notify_msg),
-                (uint8_t*)notify_msg,
+                strlen(mensaje_ble),
+                (uint8_t*)mensaje_ble,
                 false
             );
-            ESP_LOGI(MPU_TAG, "Notificado BLE: %s, err=%d", notify_msg, err);
-            send = false; // IMPORTANTE: resetea para no notificar en cada ciclo
-        }
+            ESP_LOGI(MPU_TAG, "Notificado BLE: %s, err=%d", mensaje_ble, err);
 
+            // Actualiza los últimos estados
+            strcpy(ultimo_gesto, notify_msg);
+            for (int i = 0; i < 5; i++) {
+                strcpy(ultimo_estado_flex[i], estado_flex[i]);
+            }
+            send = false;
+        }
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
@@ -629,6 +726,26 @@ void app_main(void)
     ESP_ERROR_CHECK(i2c_master_init());
     mpu6050_init();
     calibrate_mpu6050(500);
+
+    // === INICIALIZACIÓN ADC PARA SENSORES FLEX ===
+    adc_oneshot_unit_init_cfg_t init_config = { .unit_id = ADC_UNIT };
+    adc_oneshot_new_unit(&init_config, &adc_handle);
+
+    adc_oneshot_chan_cfg_t config = { .atten = ADC_ATTEN_DB_12, .bitwidth = ADC_BITWIDTH_12 };
+    adc_oneshot_config_channel(adc_handle, FLEX0_CHANNEL, &config);
+    adc_oneshot_config_channel(adc_handle, FLEX1_CHANNEL, &config);
+    adc_oneshot_config_channel(adc_handle, FLEX2_CHANNEL, &config);
+    adc_oneshot_config_channel(adc_handle, FLEX3_CHANNEL, &config);
+    adc_oneshot_config_channel(adc_handle, FLEX4_CHANNEL, &config);
+
+    adc_cali_curve_fitting_config_t cali_cfg;
+    for (int i = 0; i < 5; i++) {
+        cali_cfg.unit_id = ADC_UNIT;
+        cali_cfg.chan = ADC_CHANNEL_0 + i;
+        cali_cfg.atten = ADC_ATTEN_DB_12;
+        cali_cfg.bitwidth = ADC_BITWIDTH_12;
+        adc_cali_create_scheme_curve_fitting(&cali_cfg, &cali_handle[i]);
+    }
 
     // === CREA LA TAREA DE SENSADO Y NOTIFICACIÓN ===
     if (!mpu_task_started) {
