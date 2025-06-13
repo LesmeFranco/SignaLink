@@ -10,7 +10,7 @@
 
 </div>
 
-## 🔗 Acceso a pagina web:
+## 🔗 Acceso a página web:
 
 https://signalink2025.com
 
