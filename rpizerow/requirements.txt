@@ -1,0 +1,30 @@
+# --- Núcleo del Proyecto SignaLink ---                                           
+vosk
+websockets
+espeakng
+pyserial
+sounddevice
+numpy
+adafruit-circuitpython-busdevice
+Pillow
+smbus2
+spidev
+pandas
+scikit-learn 
+joblib
+tflite-runtime
+sqlite3
+tinydb
+pyttsx3
+ursina
+
+# --- Conectividad Bluetooth Low Energy (BLE) ---
+bleak  # Librería moderna para BLE
+dbus-fast # Dependencia de bleak
+
+# --- Peticiones a Internet (APIs, Web) ---
+requests
+
+# --- Utilidades Generales ---
+tqdm # Para barras de progreso
+psutil # Para monitorear uso de CPU/R
