@@ -39,17 +39,17 @@ sudo apt install -y python3-pip python3-venv git espeak-ng portaudio19-dev libas
 echo -e "${greenColour}[+] Dependencias del sistema instaladas.${endColour}"
 
 # --- 2. Crear el entorno virtual de Python ---
-echo -e "\n${blueColour}[+] Creando el entorno virtual 'rpizerow'...${endColour}"
-if [ ! -d "rpizerow" ]; then
-	python3 -m venv rpizerow
+echo -e "\n${blueColour}[+] Creando el entorno virtual 'venv'...${endColour}"
+if [ ! -d "venv" ]; then
+	python3 -m venv venv
 	echo -e "${greenColour}[+] Entorno virtual creado exitosamente${endColour}\n"
 else 
-	echo -e "${redColour}El entorno virtual 'rpizerow' ya existe. Omitiendo creación.${endColour}\n"
+	echo -e "${redColour}El entorno virtual 'venv' ya existe. Omitiendo creación.${endColour}\n"
 fi
 
 # --- 3. Instalar dependencias de Python con pip ---
 echo -e "\n${turquoiseColour}[+] Activando entorno virtual e instalando paquetes desde requirements.txt...${endColour}"
-source rpizerow/bin/activate 
+source venv/bin/activate 
 pip install -r requirements.txt
 deactivate
 echo -e "${greenColour}[+]Dependencias de Python instaladas exitosamente.${endColour}"
@@ -58,5 +58,5 @@ echo -e "${greenColour}[+]Dependencias de Python instaladas exitosamente.${endCo
 echo -e "\n${purpleColour}¡Instalación completada!${endColour}"
 echo -e "\n${yellowColour}================================================================${endColour}"
 echo -e "${yellowColour}  Para activar el entorno virtual, ejecuta:${endColour}"
-echo -e "${yellowColour}  source rpizerow/bin/activate${endColour}"
+echo -e "${yellowColour}  source venv/bin/activate${endColour}"
 echo -e "${yellowColour}================================================================${endColour}\n"
