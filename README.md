@@ -1,11 +1,9 @@
 <div align="center">
- 
-<img src="/Imagenes/Logo.png" alt="Logo proyecto" width="30%"/>
-
+<img src="Imagenes/Logo.png" alt="Logo proyecto" width="20%"/>
 </div>
 
 <div align="center">
- 
+
 # Tus gestos hablan, SignaLink traduce
 
 </div>
@@ -24,7 +22,7 @@ SignaLink tiene como objetivo principal traducir la lengua de señas para lograr
 
 ## 🌎 Visión a futuro
 
-Otro objetivo a largo plazo es que siga creciendo esta idea en futuras generaciones para poder proveerles un mejor manejo en la vida cotidiana para este tipo de personas, agilizando su vida social en casos de que necesiten ayuda de otras personas o simplemente comunicandose con ellos.
+Otro objetivo a largo plazo es que siga creciendo esta idea en futuras generaciones para poder proveerles un mejor manejo en la vida cotidiana a este tipo de personas, permitiendole agilizar su vida social o simplemente la comunicación con otras personas.
 
 ## 💭 ¿De dónde surgió la idea?
 
@@ -32,25 +30,46 @@ Esta idea surgió en una conversación con la bibliotecaria de nuestra escuela q
 
 ## 🖐 Descripción del proyecto:
 
-Nuestro proyecto va a estar equipado con sensores flex y sensores de giroscopio y acelerómetro que detectarán los movimientos de los dedos. Estos datos se expresan en señales analógicas, por eso es necesario un microcontrolador que convierte estas señales analógicas a digitales (ADC).
+Nuestro proyecto va a estar equipado con sensores flex, giroscopos y acelerómetros que detectarán los movimientos de los dedos.
 
-Luego serán transmitidas por BLE (Bluetooth Low Energy) a la Raspberry pi Zero 2W en un módulo separado ubicado en el pecho en forma de riñonera, que así mismo se encargará de procesar estas señales digitales para descubrir que gestos se intentó hacer. Una vez realizado este proceso se enviará en forma de texto al módulo reproductor de audio y con salida al parlante, también ubicado en el módulo de pecho, permitiendo así que las personas que se comunican mediante la lengua de señas puedan expresar su mensaje de forma audible para que cualquier receptor lo comprenda.
+Luego serán transmitidas por BLE (Bluetooth Low Energy) a un ESP32 Super Mini exclavizado a la Raspberry pi Zero 2W en un módulo separado ubicado en el pecho, que así mismo se encargará de enviarlas por UART a la Raspberry encargada de procesar estas señales para descubrir que gestos se intentó hacer. Una vez realizado este proceso se convertira mediante ESPEAKER a formato audio reproducible por un parlante, permitiendo así que las personas que se comunican mediante la lengua de señas puedan expresar su mensaje de forma audible para que cualquier receptor lo comprenda.
 
-En paralelo, un micrófono direccional se encargará de captar la voz de la persona que quiera comunicarse, esas palabras serán procesadas por el microcontrolador utilizando un modelo de reconocimiento de voz (Vosk -> Offline) y en forma de texto finalmente será mostrado en el LCD.
+En paralelo, un micrófono direccional se encargará de captar la voz de la persona que quiera comunicarse, esas palabras serán procesadas por el microcontrolador utilizando un modelo de reconocimiento de voz (Vosk -> Offline) y en forma de texto que finalmente será mostrado en el LCD OLED
 
 ## 🛠️ Componentes a utilizar:
 
-| Componentes                     | Links                                                                                                                                                                                                                                                                                                              |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Rasberry Pi Zero 2W             | [Raspberry Pi Zero 2 W - Mercado Libre](https://www.mercadolibre.com.ar/raspberry-pi-zero-2-w-64-bits-cortex-a53/p/MLA35340704#polycard_client=search-nordic&searchVariation=MLA35340704&wid=MLA1476733635&position=2&search_layout=grid&type=product&tracking_id=1a2cf9bb-b64c-4103-830b-95cb25e0c878&sid=search) |
-| ESP32-C3 Mini                   | [ESP32-C3 Mini - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1933180704-placa-desarrollo-esp32-c3-super-mini-wifi-bluetooth-sgk-_JM#polycard_client=search-nordic&position=18&search_layout=grid&type=item&tracking_id=a6179d80-9c2f-448f-931d-3f6b0744610e&wid=MLA1933180704&sid=search)              |
-| Sensores Flex                   | [Sensores Flex - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-621168012-flex-sensor-45-o-degrees-10-30-kohms-sensor-reflectivo-_JM#polycard_client=search-nordic&position=22&search_layout=stack&type=item&tracking_id=d09a116e-7fa9-4e61-b811-829b67d77fb1&wid=MLA621168012&sid=search)                |
-| Reproductor                     | [DFPlayer Mini - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1415876931-modulo-reproductor-audio-hw-247a-musica-dfplayer-mp3-wav-wma-_JM#polycard_client=search-nordic&position=11&search_layout=grid&type=item&tracking_id=ab813d9d-dc9a-42de-8274-9bea4aed94f4&wid=MLA1415876931&sid=search)         |
-| Parlante                        | [ Mini Parlante- Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-926965993-mini-parlante-mylar-50mm-8-ohms-05w-audio-arduino-nubbeo-_JM#polycard_client=search-nordic&position=8&search_layout=stack&type=item&tracking_id=5afdc171-789b-4858-9908-6e8644b818c2&wid=MLA926965993&sid=search)               |
-| Microfono                       | [ MAX 9814- Mercado Libre](https://www.mercadolibre.com.ar/modulo-microfono-amplificado-arduino-max9814-agc/p/MLA46725329#polycard_client=search-nordic&searchVariation=MLA46725329&wid=MLA2026208850&position=1&search_layout=grid&type=product&tracking_id=300cf118-f249-42f0-8552-88a0b5ccff91&sid=search)      |
-| Baterias                        | [ Lipo 3.7V - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-823943306-bateria-litio-polimero-lipo-37v-1200mah-drones-helicopteros-_JM#polycard_client=search-nordic&position=11&search_layout=stack&type=item&tracking_id=00997a8f-a302-41cd-929e-7f9b96588b73&wid=MLA823943306&sid=search)              |
-| Sensor Giroscopo y Acelerometro | [MPU6050 - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1464073846-acelerometro-giroscopo-mpu6050-6-ejes-gy-521-pic-arduino-_JM#polycard_client=search-nordic&position=4&search_layout=grid&type=item&tracking_id=1592b6fb-67c2-4128-a466-704776d0e915&wid=MLA1464073846&sid=search)                    |
-| LCD OLED                        | [LCD SSD-1306 - Mercado libre](https://articulo.mercadolibre.com.ar/MLA-832803465-display-oled-091-pulgadas-128x32-ssd1306-i2c-blanco-arduino-_JM#polycard_client=search-nordic&position=6&search_layout=grid&type=item&tracking_id=9fc3ed54-f3c3-4b96-9f93-8db0a3d194bd&wid=MLA832803465&sid=search)              |
+| Componentes                     | Links                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Rasberry Pi Zero 2W             | [Raspberry Pi Zero 2 W - Mercado Libre](https://www.mercadolibre.com.ar/raspberry-pi-zero-2-w-64-bits-cortex-a53/p/MLA35340704#polycard_client=search-nordic&searchVariation=MLA35340704&wid=MLA1476733635&position=2&search_layout=grid&type=product&tracking_id=1a2cf9bb-b64c-4103-830b-95cb25e0c878&sid=search)             |
+| ESP32-C3 Mini                   | [ESP32-C3 Mini - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1933180704-placa-desarrollo-esp32-c3-super-mini-wifi-bluetooth-sgk-_JM#polycard_client=search-nordic&position=18&search_layout=grid&type=item&tracking_id=a6179d80-9c2f-448f-931d-3f6b0744610e&wid=MLA1933180704&sid=search)                          |
+| Sensores Flex                   | [Sensores Flex - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-621168012-flex-sensor-45-o-degrees-10-30-kohms-sensor-reflectivo-_JM#polycard_client=search-nordic&position=22&search_layout=stack&type=item&tracking_id=d09a116e-7fa9-4e61-b811-829b67d77fb1&wid=MLA621168012&sid=search)                            |
+| Parlante                        | [ Mini Parlante- Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-926965993-mini-parlante-mylar-50mm-8-ohms-05w-audio-arduino-nubbeo-_JM#polycard_client=search-nordic&position=8&search_layout=stack&type=item&tracking_id=5afdc171-789b-4858-9908-6e8644b818c2&wid=MLA926965993&sid=search)                           |
+| Modulo Amplificador             | [ TDA2030 - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1117762060-modulo-amplificador-de-audio-mono-tda2030-18w-6-12v-arduino-_JM#origin%3Dshare%26sid%3Dshare)                                                                                                                                                   |
+| Microfono                       | [ MAX 9814- Mercado Libre](https://www.mercadolibre.com.ar/modulo-microfono-amplificado-arduino-max9814-agc/p/MLA46725329#polycard_client=search-nordic&searchVariation=MLA46725329&wid=MLA2026208850&position=1&search_layout=grid&type=product&tracking_id=300cf118-f249-42f0-8552-88a0b5ccff91&sid=search)                  |
+| Baterias                        | [ Lipo 3.7V - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-823943306-bateria-litio-polimero-lipo-37v-1200mah-drones-helicopteros-_JM#polycard_client=search-nordic&position=11&search_layout=stack&type=item&tracking_id=00997a8f-a302-41cd-929e-7f9b96588b73&wid=MLA823943306&sid=search)                          |
+| Sensor Giroscopo y Acelerometro | [MPU6050 - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1464073846-acelerometro-giroscopo-mpu6050-6-ejes-gy-521-pic-arduino-_JM#polycard_client=search-nordic&position=4&search_layout=grid&type=item&tracking_id=1592b6fb-67c2-4128-a466-704776d0e915&wid=MLA1464073846&sid=search)                                |
+| Step Up 5V                      | [ MT3608 - Mercado Libre](https://articulo.mercadolibre.com.ar/MLA-1410408453-5-fuente-mt3608-step-up-buck-boost-elevador-dc-dc-28v-2a-_JM#polycard_client=search-nordic&backend_model=search-backend&position=20&search_layout=stack&type=item&tracking_id=d4915a5c-d355-42a4-b246-3798a3844913&wid=MLA1410408453&sid=search) |
+| LCD OLED                        | [LCD ST7789 - Starware](https://tienda.starware.com.ar/producto/pantalla-display-tft-arduino-compatible-st7789-13p-240x240-rgb-ips-lcd-spi-65k-ic/)                                                                                                                                                                            |
+
+## 💻 Instalación y Uso
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/impatrq/SignaLink
+   ```
+2. Entrar a la carpeta rpizero2W.
+   ```bash
+   cd SignaLink/rpizero2W
+   ```
+3. Darle permisos de ejecucion al script de instalación.
+   ```bash
+   chmod +x install.sh
+   ```
+4. Ejecutar el Script.
+   ```bash
+   ./install.sh
+   ```
+5. Comenzar su uso.
 
 ## 🧑🏽‍💻 Integrantes
 
