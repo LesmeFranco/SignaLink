@@ -22,7 +22,10 @@ Típicamente, un sensor flex consiste en:
 
 ## 🖐 ¿Qué hacen los sensores flex en SignaLink?
 
-En el proyecto SignaLink, estos sensores están colocados sobre los dedos de un guante, de modo que: 1. Cada vez que un dedo se flexiona o se estira, el sensor detecta ese movimiento como un cambio de resistencia. 2. Ese cambio de resistencia se convierte en una señal analógica, que puede ser leída por un microcontrolador.. 3. Estas señales permiten determinar la posición aproximada de cada dedo en tiempo real.
+ Estos sensores están colocados sobre los dedos de un guante, de modo que:
+1. Cada vez que un dedo se flexiona o se estira, el sensor detecta ese movimiento como un cambio de resistencia.
+2. Ese cambio de resistencia se convierte en una señal analógica, que puede ser leída por un microcontrolador.
+3. Estas señales permiten determinar la posición aproximada de cada dedo en tiempo real.
 
 ## 🎯 ¿Para qué sirve esto?
 
