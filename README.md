@@ -26,6 +26,6 @@ En el proyecto SignaLink, estos sensores están colocados sobre los dedos de un 
 
 ## 🎯 ¿Para qué sirve esto?
 
-El propósito principal en SignaLink es reconocer las señas del lenguaje de señas manual. Al combinar los valores de varios sensores flex (uno por dedo, por ejemplo), se puede inferir qué gesto está haciendo la persona.
+El propósito principal en SignaLink es reconocer lo que las personas sordo-mudas quieren decir mediante la lengua de señas, utilizando y combinando valores de sensores flex. Al combinar los valores de estos sensores (uno por dedo, por ejemplo), se puede inferir qué gesto está haciendo la persona.
 
 ---
