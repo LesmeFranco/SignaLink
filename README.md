@@ -31,27 +31,8 @@ El cambio responde a la necesidad de mejorar la movilidad y comodidad en la capt
 - La alimentación se gestiona a través del estuche de carga, modificando la logística respecto al microfoneo previo con MAX9814.  
 - La digitalización y procesamiento del audio dependen del dispositivo receptor, por lo que pueden requerirse ajustes en la arquitectura del sistema.
 
----
-
-## Uso
-
-_(Agregar instrucciones específicas para conectar y configurar el micrófono con el hardware y software del proyecto.)_
-
----
-
-## Problemas conocidos
-
-_(Agregar aquí problemas o limitaciones identificadas con el nuevo micrófono, si las hubiera.)_
-
----
-
-## Contacto
-
-_(Información de contacto para consultas relacionadas con el proyecto.)_
-
----
 
 ## Datasheet y documentación
 
-[[Link al datasheet o documentación oficial](https://www.google.com/aclk?sa=l&ai=DChsSEwje2LiD3qqOAxXmYkgAHfVXAOkYACICCAEQKhoCY2U&co=1&gclid=CjwKCAjw4K3DBhBqEiwAYtG_9I22OpsVQDeKP7Tq9bUXrjIhXF_CI6YarZAkb2zByMhh5JbpZobRUBoCe2QQAvD_BwE&category=acrcp_v1_48&sig=AOD64_2ie29cprJXj-1UQj4_E_JRnw-XPw&ctype=5&q=&ved=2ahUKEwiPpK-D3qqOAxUhAbkGHYwiKPUQ9aACKAB6BAgGEBM&adurl=)]()
+[Link al datasheet o documentación oficial](https://www.google.com/aclk?sa=l&ai=DChsSEwje2LiD3qqOAxXmYkgAHfVXAOkYACICCAEQKhoCY2U&co=1&gclid=CjwKCAjw4K3DBhBqEiwAYtG_9I22OpsVQDeKP7Tq9bUXrjIhXF_CI6YarZAkb2zByMhh5JbpZobRUBoCe2QQAvD_BwE&category=acrcp_v1_48&sig=AOD64_2ie29cprJXj-1UQj4_E_JRnw-XPw&ctype=5&q=&ved=2ahUKEwiPpK-D3qqOAxUhAbkGHYwiKPUQ9aACKAB6BAgGEBM&adurl=)]()
 
