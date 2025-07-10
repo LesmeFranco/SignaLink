@@ -16,7 +16,10 @@ tflite-runtime
 sqlite3
 tinydb
 pyttsx3
-ursina
+pytranscript
+speechrecognition
+pyaudio
+
 
 # --- Conectividad Bluetooth Low Energy (BLE) ---
 bleak  # Librería moderna para BLE
