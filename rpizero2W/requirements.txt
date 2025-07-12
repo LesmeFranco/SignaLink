@@ -1,33 +1,28 @@
-# --- Núcleo del Proyecto SignaLink ---                                           
+# Núcleo del Proyecto SignaLink
+
+# --- Reconocimiento y Sintesis de Voz ---                                         
 vosk
+speechrecognition
+pytranscript
 websockets
 espeakng
+
+# --- Audio y Hardware ---
 pyserial
+pyaudio
 sounddevice
-numpy
 adafruit-circuitpython-busdevice
-Pillow
 smbus2
 spidev
-pandas
-scikit-learn 
-joblib
+
+# --- Machine Learning y Datos ---
+numpy
 tflite-runtime
-sqlite3
 tinydb
-pyttsx3
-pytranscript
-speechrecognition
-pyaudio
-
-
-# --- Conectividad Bluetooth Low Energy (BLE) ---
-bleak  # Librería moderna para BLE
-dbus-fast # Dependencia de bleak
 
 # --- Peticiones a Internet (APIs, Web) ---
 requests
 
-# --- Utilidades Generales ---
-tqdm # Para barras de progreso
-psutil # Para monitorear uso de CPU/R
+# --- Utilidades Opcionales ---
+tqdm
+psutil
