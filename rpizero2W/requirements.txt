@@ -2,8 +2,7 @@
 
 # --- Reconocimiento y Sintesis de Voz ---                                         
 vosk
-speechrecognition
-pytranscript
+speechrecognition==3.8.1
 websockets
 espeakng
 
