@@ -1,6 +1,6 @@
-# 🧱 Diseño 3D del Prototipo – Rama de Modelado en Blender
+# 🧱 Diseño 3D del Prototipo – Rama de Modelado en Fusion 360 y Blender
 
-Este README documenta todo el proceso de desarrollo del **prototipo 3D** del traductor de lenguaje de señas realizado en **Blender**. Aquí vas a encontrar desde los primeros pasos de aprendizaje hasta los resultados visuales obtenidos.
+Este README documenta todo el proceso de desarrollo del **prototipo 3D** del traductor de lengua de señas realizado en **Fusion 360** y **Blender**. Acá vas a encontrar desde los primeros pasos de aprendizaje hasta los resultados visuales obtenidos.
 
 ---
 
@@ -8,7 +8,7 @@ Este README documenta todo el proceso de desarrollo del **prototipo 3D** del tra
 
 Diseñar un modelo tridimensional que represente de forma realista y funcional el traductor de señas que estamos desarrollando, tomando en cuenta:
 
-- La posición de los sensores flex.
+- La posición de los componentes.
 - La comodidad y portabilidad del diseño.
 - La posibilidad de imprimir o replicar el prototipo.
 
@@ -16,14 +16,14 @@ Diseñar un modelo tridimensional que represente de forma realista y funcional e
 
 ## 🧪 Proceso de diseño
 
-1. **Búsqueda de referencias**: fotos de guantes, muñequeras, soportes para sensores.
-2. **Boceto digital inicial**: formas base para la mano y soportes.
-3. **Modelado progresivo**: creación de partes modulares (muñequera, soporte de dedos, conexión de sensores).
+1. **Búsqueda de referencias**: fotos de guantes, muñequeras, soportes para sensores, cajas para placas PCB, etc.
+2. **Boceto digital inicial**: siseñamos una base que sirviera como estructura para alojar sensores, placas y cables, sin incomodar al usuario.
+3. **Modelado progresivo**: creamos las piezas por separado: muñequera, riñonera, soportes y cajas (pensadas para ser impresas en 3D), sensores, placas, etc.
 4. **Texturizado y materiales**: aplicación de colores básicos para visualización.
 5. **Renderizado final**: configuración de luces, cámara y fondo neutro para presentación.
 
 <div align="center">
-  <img src="https://www.stanfordchildrens.org/content-public/topic/images/97/126197.gif" alt="Descripción de la imagen" width="400"/>
+  <img src="" alt="Descripción de la imagen" width="400"/>
 </div>
 
  
@@ -31,7 +31,7 @@ Diseñar un modelo tridimensional que represente de forma realista y funcional e
 
 ## 🎥 Recursos de aprendizaje
 
-Para aprender lo básico de Blender, seguimos una serie de tutoriales introductorios que nos ayudaron a:
+Para aprender lo básico de Blender y Fusion 360, seguimos una serie de tutoriales introductorios que nos ayudaron a:
 
 - Navegar por la interfaz.
 - Crear y editar mallas.
@@ -40,11 +40,11 @@ Para aprender lo básico de Blender, seguimos una serie de tutoriales introducto
 
 ## 🖼️ Galería 
 
-A continuación, algunos renders del modelo final en distintas vistas:
+A continuación, algunas capturas del modelo en distintas vistas:
 
-  <img src="images/WhatsApp Image 2025-06-11 at 2.19.24 PM.jpeg" width="400" alt="Foto 2"/>
-  <img src="images/WhatsApp Image 2025-06-11 at 2.24.50 PM.jpeg" width="400" alt="Foto 3"/>
-  <img src="images/WhatsApp Image 2025-06-11 at 2.20.09 PM.jpeg" width="400" alt="Foto 3"/>
+  <img src="" width="400" alt="Foto 2"/>
+  <img src="" width="400" alt="Foto 3"/>
+  <img src="" width="400" alt="Foto 3"/>
 
 ### Videos de referencia durante el trabajo
 
