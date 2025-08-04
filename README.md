@@ -53,10 +53,10 @@ A continuación, algunas capturas de los modelos finales:
 
 ## Módulo Muñeca
 
-  <img src="images/Módulo_Muñeca_3D_SignaLink.png" width="800" alt=""/>
+  <img src="images/Captura de pantalla 2025-08-04 a la(s) 11.15.48.png" width="800" alt=""/>
 
 ## Módulo Pecho
-  <img src="images/Módulo_Pecho_3D_SignaLink.png" width="800" alt=""/>
+  <img src="images/Captura de pantalla 2025-08-04 a la(s) 11.16.00.png" width="800" alt=""/>
 
 
 ### Videos de referencia durante el trabajo
