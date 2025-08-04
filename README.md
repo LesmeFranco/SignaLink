@@ -22,8 +22,17 @@ Diseñar un modelo tridimensional que represente de forma realista y funcional e
 4. **Texturizado y materiales**: aplicación de colores básicos para visualización.
 5. **Renderizado final**: configuración de luces, cámara y fondo neutro para presentación.
 
-<div align="center">
-  <img src="" alt="Descripción de la imagen" width="400"/>
+## 🔨 Imágenes durante el proceso
+
+  <img src="images/WhatsApp Image 2025-08-04 at 10.35.30.jpeg" alt="Descripción de la imagen" width="800"/>
+</div>
+  <img src="images/WhatsApp Image 2025-08-04 at 10.36.19.jpeg" alt="Descripción de la imagen" width="800"/>
+</div>
+  <img src="images/WhatsApp Image 2025-08-04 at 10.37.14.jpeg" alt="Descripción de la imagen" width="800"/>
+</div>
+  <img src="images/WhatsApp Image 2025-08-04 at 10.43.25.jpeg" alt="Descripción de la imagen" width="800"/>
+</div>
+  <img src="images/WhatsApp Image 2025-08-04 at 10.44.15.jpeg" alt="Descripción de la imagen" width="800"/>
 </div>
 
  
@@ -40,11 +49,15 @@ Para aprender lo básico de Blender y Fusion 360, seguimos una serie de tutorial
 
 ## 🖼️ Galería 
 
-A continuación, algunas capturas del modelo en distintas vistas:
+A continuación, algunas capturas de los modelos finales:
 
-  <img src="" width="400" alt="Foto 2"/>
-  <img src="" width="400" alt="Foto 3"/>
-  <img src="" width="400" alt="Foto 3"/>
+## Módulo Muñeca
+
+  <img src="images/Módulo_Muñeca_3D_SignaLink.png" width="800" alt=""/>
+
+## Módulo Pecho
+  <img src="images/Módulo_Pecho_3D_SignaLink.png" width="800" alt=""/>
+
 
 ### Videos de referencia durante el trabajo
 
@@ -54,5 +67,5 @@ A continuación, algunas capturas del modelo en distintas vistas:
 | ✋ *Cómo modelar una mano low poly* | [Ver en YouTube](https://www.youtube.com/watch?v=9RyBq10cTYE) | 25 min |
 | 💡 *Luces y cámara para renders pro* | [Ver en YouTube](https://www.youtube.com/watch?v=O9zMt4KxPvs) | 18 min |
 | 🛠️ *Tips de modelado para principiantes* | [Ver en YouTube](https://www.youtube.com/watch?v=VT5oZndzj68) | 10 min |
-| 🔎 *Prototipo de referencia* | [Investigar](https://media.printables.com/media/prints/870468/images/6681673_e2a866c6-d7e2-4e5e-ad4a-73e39c4378fc_fca40cd5-8bfa-4422-a103-33a75f017ac9/thumbs/inside/1280x960/jpg/make-me-2024_usprawnianie-malej-motoryki-projekt-ortezy-w-technologii-druku-3d-fdm-wspomagajacej-rehabilitacje-osob-ze-spastycznoscia-dloni_1.webp) | 30 min |
+| 🔎 *Prototipo de referencia* | [Investigar](https://cdn.thingiverse.com/renders/6c/c7/28/d9/e9/5f9696f5e9e06889e206539301f295fb_display_large.jpg) |  |
 ---
