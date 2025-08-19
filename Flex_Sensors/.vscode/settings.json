@@ -1,5 +1,5 @@
 {
-    "idf.portWin": "COM3",
+    "idf.portWin": "COM11",
     "idf.openOcdConfigs": [
         "board/esp32c3-builtin.cfg"
     ],
@@ -9,5 +9,6 @@
     "idf.flashType": "UART",
     "idf.espIdfPathWin": "c:\\Tareas\\ESP32\\v5.4.1\\esp-idf",
     "idf.toolsPathWin": "C:\\Users\\valentin\\.espressif",
-    "idf.pythonInstallPath": "C:\\Users\\valentin\\.espressif\\tools\\idf-python\\3.11.2\\python.exe"
+    "idf.pythonInstallPath": "C:\\Users\\valentin\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
+    "idf.currentSetup": "c:\\Tareas\\ESP32\\v5.4.1\\esp-idf"
 }
