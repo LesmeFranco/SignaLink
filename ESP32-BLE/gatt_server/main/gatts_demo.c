@@ -323,32 +323,32 @@ static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, 
     float R_flex = R_FIXED * (VCC / voltage - 1.0);
 
     // Clasificación según tu código original
-    if (flex_idx == 4) { // MEÑIQUE
+    if (flex_idx == 4) { // MEÑIQUE N° 9
         if (R_flex < 52000 && R_flex > 45000 ) strncpy(estado_out, "muy flexionado", len);
         else if (R_flex > 20000 && R_flex < 45000) strncpy(estado_out, "medio", len);
         else if (R_flex > 52000) strncpy(estado_out, "maximo", len);
         else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len);
-    } else if (flex_idx == 0) { // INDICE
-        if (R_flex < 50000 && R_flex > 37000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 20000 && R_flex < 37000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 50000) strncpy(estado_out, "maximo", len);
-        else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
+    } else if (flex_idx == 0) { // INDICE N°10
+        if (R_flex < 60000 && R_flex > 45000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 21000 && R_flex < 45000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 60000) strncpy(estado_out, "maximo", len);
+        else if (R_flex > 13000 && R_flex < 21000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len);
-    } else if (flex_idx == 1) { // MAYOR
-        if (R_flex < 40000 && R_flex > 29000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 15000 && R_flex < 29000) strncpy(estado_out, "medio", len);
+    } else if (flex_idx == 1) { // MAYOR N°12
+        if (R_flex < 42000 && R_flex > 32000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 15000 && R_flex < 32000) strncpy(estado_out, "medio", len);
         else if (R_flex > 40000) strncpy(estado_out, "maximo", len);
         else if (R_flex > 11000 && R_flex < 15000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len); 
-    } else if  (flex_idx == 2) { // ANULAR
-        if (R_flex < 9000 && R_flex > 8000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 6000 && R_flex < 8000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 5000 && R_flex < 6000) strncpy(estado_out, "recto", len);
+    } else if  (flex_idx == 2) { // ANULAR N° 7 
+        if (R_flex < 14500 && R_flex > 10000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 7000 && R_flex < 10000) strncpy(estado_out, "medio", len);
+        else if (R_flex > 5000 && R_flex < 7000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len);
-    } else if (flex_idx == 3) { // GORDO
-        if (R_flex < 67000 && R_flex > 55000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 20000 && R_flex < 55000) strncpy(estado_out, "medio", len);
+    } else if (flex_idx == 3) { // GORDO N° 11
+        if (R_flex < 67000 && R_flex > 58000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 20000 && R_flex < 58000) strncpy(estado_out, "medio", len);
         else if (R_flex > 67000) strncpy(estado_out, "maximo", len);
         else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len);
