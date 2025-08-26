@@ -28,34 +28,12 @@
 #include "esp_adc/adc_cali.h"
 #include "esp_adc/adc_cali_scheme.h"
 
-// Includes para la pantalla OLED y LVGL
-#include "esp_lcd_panel_io.h"
-#include "esp_lcd_panel_ops.h"
-#include "esp_err.h"
-#include "esp_log.h"
-#include "driver/i2c_master.h"
-#include "esp_lvgl_port.h"
-#include "lvgl.h"
-
-#if CONFIG_EXAMPLE_LCD_CONTROLLER_SH1107
-#include "esp_lcd_sh1107.h"
-#else
-#include "esp_lcd_panel_vendor.h"
-#endif
-
-// --- Definiciones y Macros para BLE y Sensores ---
 #define GATTS_TAG "GATTS_DEMO"
-#define MPU_TAG "MPU6050"
 
 #define GATTS_SERVICE_UUID_TEST_A   0x00FF
 #define GATTS_CHAR_UUID_TEST_A      0xFF01
 #define GATTS_DESCR_UUID_TEST_A     0x3333
 #define GATTS_NUM_HANDLE_TEST_A     4
-
-// Nuevo UUID para la característica del texto del micrófono
-#define GATTS_CHAR_UUID_MIC_TEXT    0xFF02 
-#define GATTS_DESCR_UUID_MIC_TEXT   0x4444
-#define GATTS_NUM_HANDLE_MIC_TEXT   4
 
 #define GATTS_SERVICE_UUID_TEST_B   0x00EE
 #define GATTS_CHAR_UUID_TEST_B      0xEE01
@@ -75,8 +53,9 @@
 #define FLEX4_CHANNEL   ADC_CHANNEL_4
 
 static char test_device_name[ESP_BLE_ADV_NAME_LEN_MAX] = "ESP_GATTS_DEMO";
+
 #define TEST_MANUFACTURER_DATA_LEN  17
-#define GATTS_DEMO_CHAR_VAL_LEN_MAX 256 // Aumentado para texto
+#define GATTS_DEMO_CHAR_VAL_LEN_MAX 0x40
 #define PREPARE_BUF_MAX_SIZE 1024
 
 static uint8_t char1_str[] = {0x11,0x22,0x33};
@@ -182,7 +161,7 @@ typedef struct {
 static prepare_type_env_t a_prepare_write_env;
 static prepare_type_env_t b_prepare_write_env;
 
-// --- Configuración y variables del MPU6050 ---
+// ==== MPU6050 CONFIGURACIÓN Y FUNCIONES ====
 #define I2C_MASTER_SDA_IO    6
 #define I2C_MASTER_SCL_IO    7
 #define I2C_MASTER_NUM       0
@@ -209,6 +188,8 @@ static prepare_type_env_t b_prepare_write_env;
 #define THRESHOLD_Z_180 135.0f
 #define THRESHOLD_Z_270 225.0f
 
+static const char *MPU_TAG = "MPU6050";
+
 typedef struct {
     float accel_offset_x, accel_offset_y, accel_offset_z;
     float gyro_offset_x, gyro_offset_y, gyro_offset_z;
@@ -233,30 +214,7 @@ static bool mpu_task_started = false;
 static esp_gatt_if_t mpu_gatts_if = 0;
 static uint16_t mpu_conn_id = 0;
 static uint16_t mpu_char_handle = 0;
-static uint16_t mic_char_handle = 0;
 
-// --- Configuración y variables del OLED/LVGL ---
-#define I2C_BUS_PORT 0
-#define EXAMPLE_LCD_PIXEL_CLOCK_HZ (400 * 1000)
-#define EXAMPLE_PIN_NUM_SDA 6
-#define EXAMPLE_PIN_NUM_SCL 7
-#define EXAMPLE_PIN_NUM_RST -1
-#define EXAMPLE_I2C_HW_ADDR 0x3C
-
-#if CONFIG_EXAMPLE_LCD_CONTROLLER_SSD1306
-#define EXAMPLE_LCD_H_RES 128
-#define EXAMPLE_LCD_V_RES CONFIG_EXAMPLE_SSD1306_HEIGHT
-#elif CONFIG_EXAMPLE_LCD_CONTROLLER_SH1107
-#define EXAMPLE_LCD_H_RES 64
-#define EXAMPLE_LCD_V_RES 128
-#endif
-
-#define EXAMPLE_LCD_CMD_BITS 8
-#define EXAMPLE_LCD_PARAM_BITS 8
-
-lv_obj_t *global_lv_label = NULL;
-
-// --- Funciones del MPU6050 ---
 static esp_err_t i2c_master_init(void) {
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
@@ -397,7 +355,6 @@ static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, 
     }
 }
 
-// --- Tarea de sensado y notificación BLE ---
 static void mpu6050_task(void *arg) {
     float ax, ay, az, gx, gy, gz, ang_x, ang_y, ang_z;
     last_time_us = esp_timer_get_time();
@@ -407,7 +364,7 @@ static void mpu6050_task(void *arg) {
 
         get_sensor_data(&ax, &ay, &az, &gx, &gy, &gz, &ang_x, &ang_y, &ang_z);
 
-        // --- LÓGICA DE GESTOS ---
+        // --- LÓGICA DE GESTOS (NO TOCAR, ya está bien) ---
         bool is_x_centered = (ang_x <= THRESHOLD_CENTERED_RANGE || ang_x >= (360.0f - THRESHOLD_CENTERED_RANGE));
         bool is_y_centered = (ang_y >= (180.0f - THRESHOLD_CENTERED_RANGE) && ang_y <= (180.0f + THRESHOLD_CENTERED_RANGE));
         if (is_x_centered && is_y_centered) {
@@ -443,6 +400,7 @@ static void mpu6050_task(void *arg) {
         }
 
         if (!msg_hand_centered_triggered && !msg_hand_reverse_triggered) {
+            // Solo activar lateral si no está centrada ni al revés
             if (ang_x >= THRESHOLD_X_RIGHT && ang_x < 180.0f) {
                 if (!msg_x_right_triggered) {
                     strcpy(notify_msg, "MANO_IZQUIERDA");
@@ -461,6 +419,7 @@ static void mpu6050_task(void *arg) {
             } else {
                 msg_x_left_triggered = false;
             }
+            // Solo activar adelante/atrás si no está centrada ni al revés
             if (ang_y >= THRESHOLD_Y_FORWARD && ang_y < 180.0f) {
                 if (!msg_y_forward_triggered) {
                     strcpy(notify_msg, "MANO_ADELANTE");
@@ -481,6 +440,7 @@ static void mpu6050_task(void *arg) {
             }
         }
 
+        // Lógica para el Eje Z (Yaw de la mano) - Rotación de la muñeca
         if (ang_z >= THRESHOLD_Z_90 && ang_z < THRESHOLD_Z_180) {
             if (!msg_z_90_triggered) {
                 strcpy(notify_msg, "Z_90");
@@ -516,6 +476,7 @@ static void mpu6050_task(void *arg) {
         leer_estado_flex(3, FLEX3_CHANNEL, cali_handle[3], estado_flex[3], sizeof(estado_flex[3]));
         leer_estado_flex(4, FLEX4_CHANNEL, cali_handle[4], estado_flex[4], sizeof(estado_flex[4]));
 
+        // Detectar si cambió el gesto o algún flex
         bool flex_cambio = false;
         for (int i = 0; i < 5; i++) {
             if (strcmp(estado_flex[i], ultimo_estado_flex[i]) != 0) {
@@ -525,6 +486,7 @@ static void mpu6050_task(void *arg) {
         }
         bool gesto_cambio = (strcmp(notify_msg, ultimo_gesto) != 0);
 
+        // Solo enviar si cambió el gesto o algún flex
         if ((send || flex_cambio) && mpu_gatts_if != 0 && mpu_char_handle != 0) {
             char mensaje_ble[256];
             snprintf(mensaje_ble, sizeof(mensaje_ble),
@@ -543,19 +505,61 @@ static void mpu6050_task(void *arg) {
             );
             ESP_LOGI(MPU_TAG, "Notificado BLE: %s, err=%d", mensaje_ble, err);
 
+            // Actualiza los últimos estados
             strcpy(ultimo_gesto, notify_msg);
             for (int i = 0; i < 5; i++) {
                 strcpy(ultimo_estado_flex[i], estado_flex[i]);
             }
             send = false;
         }
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
 
-// --- Handlers de eventos BLE ---
+// --- BLE HANDLERS Y CALLBACKS ---
 void example_write_event_env(esp_gatt_if_t gatts_if, prepare_type_env_t *prepare_write_env, esp_ble_gatts_cb_param_t *param);
 void example_exec_write_event_env(prepare_type_env_t *prepare_write_env, esp_ble_gatts_cb_param_t *param);
+
+static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param)
+{
+    switch (event) {
+    case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
+        adv_config_done &= (~adv_config_flag);
+        if (adv_config_done == 0){
+            esp_ble_gap_start_advertising(&adv_params);
+        }
+        break;
+    case ESP_GAP_BLE_SCAN_RSP_DATA_SET_COMPLETE_EVT:
+        adv_config_done &= (~scan_rsp_config_flag);
+        if (adv_config_done == 0){
+            esp_ble_gap_start_advertising(&adv_params);
+        }
+        break;
+    case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
+        if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
+            ESP_LOGE(GATTS_TAG, "Advertising start failed, status %d", param->adv_start_cmpl.status);
+            break;
+        }
+        ESP_LOGI(GATTS_TAG, "Advertising start successfully");
+        break;
+    case ESP_GAP_BLE_ADV_STOP_COMPLETE_EVT:
+        if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
+            ESP_LOGE(GATTS_TAG, "Advertising stop failed, status %d", param->adv_stop_cmpl.status);
+            break;
+        }
+        ESP_LOGI(GATTS_TAG, "Advertising stop successfully");
+        break;
+    case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
+         ESP_LOGI(GATTS_TAG, "Connection params update, status %d, conn_int %d, latency %d, timeout %d",
+                  param->update_conn_params.status,
+                  param->update_conn_params.conn_int,
+                  param->update_conn_params.latency,
+                  param->update_conn_params.timeout);
+        break;
+    default:
+        break;
+    }
+}
 
 static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
     switch (event) {
@@ -581,29 +585,16 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
                                ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
                                a_property,
                                &gatts_demo_char1_val, NULL);
-
-        // Agrega la nueva característica para el texto del micrófono
-        gl_profile_tab[PROFILE_A_APP_ID].char_uuid.uuid.uuid16 = GATTS_CHAR_UUID_MIC_TEXT;
-        esp_ble_gatts_add_char(gl_profile_tab[PROFILE_A_APP_ID].service_handle, &gl_profile_tab[PROFILE_A_APP_ID].char_uuid,
-                               ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
-                               ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_WRITE,
-                               NULL, NULL);
         break;
     case ESP_GATTS_ADD_CHAR_EVT:
-        if (param->add_char.char_uuid.uuid.uuid16 == GATTS_CHAR_UUID_TEST_A) {
-            gl_profile_tab[PROFILE_A_APP_ID].char_handle = param->add_char.attr_handle;
-            mpu_char_handle = param->add_char.attr_handle; // Guarda el handle para notificaciones
-            gl_profile_tab[PROFILE_A_APP_ID].descr_uuid.len = ESP_UUID_LEN_16;
-            gl_profile_tab[PROFILE_A_APP_ID].descr_uuid.uuid.uuid16 = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-            esp_ble_gatts_add_char_descr(gl_profile_tab[PROFILE_A_APP_ID].service_handle, &gl_profile_tab[PROFILE_A_APP_ID].descr_uuid,
-                                        ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, NULL, NULL);
-        } else if (param->add_char.char_uuid.uuid.uuid16 == GATTS_CHAR_UUID_MIC_TEXT) {
-            mic_char_handle = param->add_char.attr_handle; // Guarda el handle para la escritura
-            gl_profile_tab[PROFILE_A_APP_ID].descr_uuid.len = ESP_UUID_LEN_16;
-            gl_profile_tab[PROFILE_A_APP_ID].descr_uuid.uuid.uuid16 = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-            esp_ble_gatts_add_char_descr(gl_profile_tab[PROFILE_A_APP_ID].service_handle, &gl_profile_tab[PROFILE_A_APP_ID].descr_uuid,
-                                        ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, NULL, NULL);
-        }
+        gl_profile_tab[PROFILE_A_APP_ID].char_handle = param->add_char.attr_handle;
+        gl_profile_tab[PROFILE_A_APP_ID].descr_uuid.len = ESP_UUID_LEN_16;
+        gl_profile_tab[PROFILE_A_APP_ID].descr_uuid.uuid.uuid16 = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
+        esp_ble_gatts_add_char_descr(gl_profile_tab[PROFILE_A_APP_ID].service_handle, &gl_profile_tab[PROFILE_A_APP_ID].descr_uuid,
+                                     ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, NULL, NULL);
+        mpu_char_handle = param->add_char.attr_handle; // Para notificaciones MPU6050
+
+        // Crea la tarea si ya hay conexión BLE y aún no se creó
         break;
     case ESP_GATTS_ADD_CHAR_DESCR_EVT:
         gl_profile_tab[PROFILE_A_APP_ID].descr_handle = param->add_char_descr.attr_handle;
@@ -619,19 +610,17 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
     case ESP_GATTS_WRITE_EVT: {
         ESP_LOGI(GATTS_TAG, "ESP_GATTS_WRITE_EVT, handle = %d", param->write.handle);
         esp_gatt_status_t status = ESP_GATT_OK;
+        // Responde siempre, sea descriptor o característica
         esp_ble_gatts_send_response(gatts_if, param->write.conn_id, param->write.trans_id, status, NULL);
 
-        if (param->write.handle == mic_char_handle) {
-            // Se recibió texto del micrófono, actualiza la pantalla OLED
-            if (global_lv_label != NULL) {
-                if (lvgl_port_lock(0)) {
-                    // Copia el texto recibido y lo null-termina
-                    char received_text[param->write.len + 1];
-                    memcpy(received_text, param->write.value, param->write.len);
-                    received_text[param->write.len] = '\0';
-                    lv_label_set_text(global_lv_label, received_text);
-                    lvgl_port_unlock();
-                }
+        if (param->write.handle == gl_profile_tab[PROFILE_A_APP_ID].descr_handle && param->write.len == 2) {
+            uint16_t descr_value = param->write.value[1]<<8 | param->write.value[0];
+            if (descr_value == 0x0001) {
+                ESP_LOGI(GATTS_TAG, "Notificaciones habilitadas");
+            } else if (descr_value == 0x0002) {
+                ESP_LOGI(GATTS_TAG, "Indications habilitadas");
+            } else if (descr_value == 0x0000) {
+                ESP_LOGI(GATTS_TAG, "Notificaciones/Indications deshabilitadas");
             }
         }
         break;
@@ -641,7 +630,9 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
     }
 }
 
-static void gatts_profile_b_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {}
+static void gatts_profile_b_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
+    // Puedes dejarlo vacío o igual que el ejemplo de Espressif si no usas el perfil B
+}
 
 static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 {
@@ -664,12 +655,11 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     }
 }
 
-// --- MAIN ---
+// ==== MAIN ====
 void app_main(void)
 {
     esp_err_t ret;
 
-    // --- Inicialización del Sistema ---
     ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -677,44 +667,77 @@ void app_main(void)
     }
     ESP_ERROR_CHECK( ret );
 
-    // --- Configuración de BLE ---
     ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
+
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
     ret = esp_bt_controller_init(&bt_cfg);
-    if (ret) { ESP_LOGE(GATTS_TAG, "%s initialize controller failed: %s", __func__, esp_err_to_name(ret)); return; }
+    if (ret) {
+        ESP_LOGE(GATTS_TAG, "%s initialize controller failed: %s", __func__, esp_err_to_name(ret));
+        return;
+    }
+
     ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
-    if (ret) { ESP_LOGE(GATTS_TAG, "%s enable controller failed: %s", __func__, esp_err_to_name(ret)); return; }
+    if (ret) {
+        ESP_LOGE(GATTS_TAG, "%s enable controller failed: %s", __func__, esp_err_to_name(ret));
+        return;
+    }
+
     ret = esp_bluedroid_init();
-    if (ret) { ESP_LOGE(GATTS_TAG, "%s init bluetooth failed: %s", __func__, esp_err_to_name(ret)); return; }
+    if (ret) {
+        ESP_LOGE(GATTS_TAG, "%s init bluetooth failed: %s", __func__, esp_err_to_name(ret));
+        return;
+    }
     ret = esp_bluedroid_enable();
-    if (ret) { ESP_LOGE(GATTS_TAG, "%s enable bluetooth failed: %s", __func__, esp_err_to_name(ret)); return; }
+    if (ret) {
+        ESP_LOGE(GATTS_TAG, "%s enable bluetooth failed: %s", __func__, esp_err_to_name(ret));
+        return;
+    }
 
     gl_profile_tab[PROFILE_A_APP_ID].gatts_cb = gatts_profile_a_event_handler;
     gl_profile_tab[PROFILE_B_APP_ID].gatts_cb = gatts_profile_b_event_handler;
-    ret = esp_ble_gatts_register_callback(gatts_event_handler);
-    if (ret){ ESP_LOGE(GATTS_TAG, "gatts register error, error code = %x", ret); return; }
-    ret = esp_ble_gap_register_callback(gap_event_handler);
-    if (ret){ ESP_LOGE(GATTS_TAG, "gap register error, error code = %x", ret); return; }
-    ret = esp_ble_gatts_app_register(PROFILE_A_APP_ID);
-    if (ret){ ESP_LOGE(GATTS_TAG, "gatts app register error, error code = %x", ret); return; }
-    ret = esp_ble_gatts_app_register(PROFILE_B_APP_ID);
-    if (ret){ ESP_LOGE(GATTS_TAG, "gatts app register error, error code = %x", ret); return; }
-    esp_err_t local_mtu_ret = esp_ble_gatt_set_local_mtu(500);
-    if (local_mtu_ret){ ESP_LOGE(GATTS_TAG, "set local  MTU failed, error code = %x", local_mtu_ret); }
 
-    // --- Inicialización Sensores (MPU6050 y Flex) ---
+    ret = esp_ble_gatts_register_callback(gatts_event_handler);
+    if (ret){
+        ESP_LOGE(GATTS_TAG, "gatts register error, error code = %x", ret);
+        return;
+    }
+    ret = esp_ble_gap_register_callback(gap_event_handler);
+    if (ret){
+        ESP_LOGE(GATTS_TAG, "gap register error, error code = %x", ret);
+        return;
+    }
+    ret = esp_ble_gatts_app_register(PROFILE_A_APP_ID);
+    if (ret){
+        ESP_LOGE(GATTS_TAG, "gatts app register error, error code = %x", ret);
+        return;
+    }
+    ret = esp_ble_gatts_app_register(PROFILE_B_APP_ID);
+    if (ret){
+        ESP_LOGE(GATTS_TAG, "gatts app register error, error code = %x", ret);
+        return;
+    }
+    esp_err_t local_mtu_ret = esp_ble_gatt_set_local_mtu(500);
+    if (local_mtu_ret){
+        ESP_LOGE(GATTS_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
+    }
+
+    // === INICIALIZACIÓN MPU6050 ===
     ESP_LOGI(MPU_TAG, "Inicializando I2C y MPU6050...");
     ESP_ERROR_CHECK(i2c_master_init());
     mpu6050_init();
     calibrate_mpu6050(500);
+
+    // === INICIALIZACIÓN ADC PARA SENSORES FLEX ===
     adc_oneshot_unit_init_cfg_t init_config = { .unit_id = ADC_UNIT };
     adc_oneshot_new_unit(&init_config, &adc_handle);
+
     adc_oneshot_chan_cfg_t config = { .atten = ADC_ATTEN_DB_12, .bitwidth = ADC_BITWIDTH_12 };
     adc_oneshot_config_channel(adc_handle, FLEX0_CHANNEL, &config);
     adc_oneshot_config_channel(adc_handle, FLEX1_CHANNEL, &config);
     adc_oneshot_config_channel(adc_handle, FLEX2_CHANNEL, &config);
     adc_oneshot_config_channel(adc_handle, FLEX3_CHANNEL, &config);
     adc_oneshot_config_channel(adc_handle, FLEX4_CHANNEL, &config);
+
     adc_cali_curve_fitting_config_t cali_cfg;
     for (int i = 0; i < 5; i++) {
         cali_cfg.unit_id = ADC_UNIT;
@@ -724,74 +747,7 @@ void app_main(void)
         adc_cali_create_scheme_curve_fitting(&cali_cfg, &cali_handle[i]);
     }
 
-    // --- Inicialización Pantalla OLED y LVGL ---
-    ESP_LOGI(TAG, "Initialize I2C bus for OLED");
-    i2c_master_bus_handle_t i2c_bus = NULL;
-    i2c_master_bus_config_t bus_config = {
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .glitch_ignore_cnt = 7,
-        .i2c_port = I2C_BUS_PORT,
-        .sda_io_num = EXAMPLE_PIN_NUM_SDA,
-        .scl_io_num = EXAMPLE_PIN_NUM_SCL,
-        .flags.enable_internal_pullup = true,
-    };
-    ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, &i2c_bus));
-    esp_lcd_panel_io_handle_t io_handle = NULL;
-    esp_lcd_panel_io_i2c_config_t io_config = {
-        .dev_addr = EXAMPLE_I2C_HW_ADDR,
-        .scl_speed_hz = EXAMPLE_LCD_PIXEL_CLOCK_HZ,
-        .control_phase_bytes = 1,
-        .lcd_cmd_bits = EXAMPLE_LCD_CMD_BITS,
-        .lcd_param_bits = EXAMPLE_LCD_CMD_BITS,
-#if CONFIG_EXAMPLE_LCD_CONTROLLER_SSD1306
-        .dc_bit_offset = 6,
-#elif CONFIG_EXAMPLE_LCD_CONTROLLER_SH1107
-        .dc_bit_offset = 0,
-        .flags = { .disable_control_phase = 1, }
-#endif
-    };
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus, &io_config, &io_handle));
-    esp_lcd_panel_handle_t panel_handle = NULL;
-    esp_lcd_panel_dev_config_t panel_config = { .bits_per_pixel = 1, .reset_gpio_num = EXAMPLE_PIN_NUM_RST, };
-#if CONFIG_EXAMPLE_LCD_CONTROLLER_SSD1306
-    esp_lcd_panel_ssd1306_config_t ssd1306_config = { .height = EXAMPLE_LCD_V_RES, };
-    panel_config.vendor_config = &ssd1306_config;
-    ESP_ERROR_CHECK(esp_lcd_new_panel_ssd1306(io_handle, &panel_config, &panel_handle));
-#elif CONFIG_EXAMPLE_LCD_CONTROLLER_SH1107
-    ESP_ERROR_CHECK(esp_lcd_new_panel_sh1107(io_handle, &panel_config, &panel_handle));
-#endif
-    ESP_ERROR_CHECK(esp_lcd_panel_reset(panel_handle));
-    ESP_ERROR_CHECK(esp_lcd_panel_init(panel_handle));
-    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_handle, true));
-#if CONFIG_EXAMPLE_LCD_CONTROLLER_SH1107
-    ESP_ERROR_CHECK(esp_lcd_panel_invert_color(panel_handle, true));
-#endif
-    ESP_LOGI(TAG, "Initialize LVGL");
-    const lvgl_port_cfg_t lvgl_cfg = ESP_LVGL_PORT_INIT_CONFIG();
-    lvgl_port_init(&lvgl_cfg);
-    const lvgl_port_display_cfg_t disp_cfg = {
-        .io_handle = io_handle,
-        .panel_handle = panel_handle,
-        .buffer_size = EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES,
-        .double_buffer = true,
-        .hres = EXAMPLE_LCD_H_RES,
-        .vres = EXAMPLE_LCD_V_RES,
-        .monochrome = true,
-        .rotation = { .swap_xy = false, .mirror_x = false, .mirror_y = false, }
-    };
-    lv_disp_t *disp = lvgl_port_add_disp(&disp_cfg);
-    lv_disp_set_rotation(disp, LV_DISP_ROT_NONE);
-    if (lvgl_port_lock(0)) {
-        lv_obj_t *scr = lv_disp_get_scr_act(disp);
-        global_lv_label = lv_label_create(scr);
-        lv_label_set_long_mode(global_lv_label, LV_LABEL_LONG_SCROLL_CIRCULAR); // Cambiado a scroll circular para un mejor efecto visual.
-        lv_label_set_text(global_lv_label, "Esperando texto por BLE...");
-        lv_obj_set_width(global_lv_label, disp->driver->hor_res);
-        lv_obj_align(global_lv_label, LV_ALIGN_CENTER, 0, 0);
-        lvgl_port_unlock();
-    }
-    
-    // --- Crea la tarea de sensado y notificación ---
+    // === CREA LA TAREA DE SENSADO Y NOTIFICACIÓN ===
     if (!mpu_task_started) {
         xTaskCreate(mpu6050_task, "mpu6050_task", 4096, NULL, 5, NULL);
         mpu_task_started = true;
