@@ -330,10 +330,10 @@ static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, 
         else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len);
     } else if (flex_idx == 0) { // INDICE N°10
-        if (R_flex < 60000 && R_flex > 45000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 21000 && R_flex < 45000) strncpy(estado_out, "medio", len);
+        if (R_flex < 60000 && R_flex > 40000 ) strncpy(estado_out, "muy flexionado", len);
+        else if (R_flex > 21000 && R_flex < 40000) strncpy(estado_out, "medio", len);
         else if (R_flex > 60000) strncpy(estado_out, "maximo", len);
-        else if (R_flex > 13000 && R_flex < 21000) strncpy(estado_out, "recto", len);
+        else if (R_flex > 8000 && R_flex < 13000) strncpy(estado_out, "recto", len);
         else strncpy(estado_out, "desconocido", len);
     } else if (flex_idx == 1) { // MAYOR N°12
         if (R_flex < 42000 && R_flex > 32000 ) strncpy(estado_out, "muy flexionado", len);
