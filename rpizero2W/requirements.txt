@@ -1,0 +1,27 @@
+# Núcleo del Proyecto SignaLink
+
+# --- Reconocimiento y Sintesis de Voz ---                                         
+vosk
+speechrecognition==3.8.1
+websockets
+espeakng
+
+# --- Audio y Hardware ---
+pyserial
+pyaudio
+sounddevice
+adafruit-circuitpython-busdevice
+smbus2
+spidev
+
+# --- Machine Learning y Datos ---
+numpy
+tflite-runtime
+tinydb
+
+# --- Peticiones a Internet (APIs, Web) ---
+requests
+
+# --- Utilidades Opcionales ---
+tqdm
+psutil
