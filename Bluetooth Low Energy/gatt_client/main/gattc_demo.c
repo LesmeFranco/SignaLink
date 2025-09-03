@@ -103,7 +103,7 @@ static void print_string_from_hex(const char *tag, const uint8_t *buffer, uint16
     if (text_buffer) {
         memcpy(text_buffer, buffer, len);
         text_buffer[len] = '\0';
-        ESP_LOGI(tag, "Notificacion recibida: %s", text_buffer);
+    // ESP_LOGI(tag, "Notificacion recibida: %s", text_buffer); // Eliminado por solicitud
         uart_write_bytes(UART_PORT, text_buffer, len);
         free(text_buffer);
     } else {
