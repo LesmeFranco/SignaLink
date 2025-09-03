@@ -308,6 +308,12 @@ static void get_sensor_data(float *accel_x_g, float *accel_y_g, float *accel_z_g
 }
 
 static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, char* estado_out, size_t len) {
+    static int initialized = 0;
+    static int flex_init_val[5] = {0};
+    if (!initialized) {
+        for (int i = 0; i < 5; i++) flex_init_val[i] = 10000;
+        initialized = 1;
+    }
     int sum_adc = 0;
     for (int i = 0; i < N; i++) {
         int adc_raw = 0;
@@ -320,8 +326,13 @@ static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, 
     adc_cali_raw_to_voltage(cali, adc_avg, &voltage_mv);
     float voltage = voltage_mv / 1000.0f;
     float R_flex = R_FIXED * (VCC / voltage - 1.0);
-    // Guardar el valor crudo de resistencia como string entero
-    snprintf(estado_out, len, "%d", (int)R_flex);
+    // Forzar el valor inicial a 10000 solo en la primera lectura
+    if (flex_init_val[flex_idx] == 10000) {
+        snprintf(estado_out, len, "%d", 10000);
+        flex_init_val[flex_idx] = -1; // Ya no volver a forzar
+    } else {
+        snprintf(estado_out, len, "%d", (int)R_flex);
+    }
 }
 
 static void mpu6050_task(void *arg) {
