@@ -320,162 +320,29 @@ static void leer_estado_flex(int flex_idx, int channel, adc_cali_handle_t cali, 
     adc_cali_raw_to_voltage(cali, adc_avg, &voltage_mv);
     float voltage = voltage_mv / 1000.0f;
     float R_flex = R_FIXED * (VCC / voltage - 1.0);
-
-    // Clasificación según tu código original
-    if (flex_idx == 4) { // MEÑIQUE N° 9
-        if (R_flex < 52000 && R_flex > 45000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 20000 && R_flex < 45000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 52000) strncpy(estado_out, "maximo", len);
-        else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
-        else strncpy(estado_out, "desconocido", len);
-    } else if (flex_idx == 0) { // INDICE N°10
-        if (R_flex < 60000 && R_flex > 40000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 21000 && R_flex < 40000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 60000) strncpy(estado_out, "maximo", len);
-        else if (R_flex > 8000 && R_flex < 13000) strncpy(estado_out, "recto", len);
-        else strncpy(estado_out, "desconocido", len);
-    } else if (flex_idx == 1) { // MAYOR N°12
-        if (R_flex < 42000 && R_flex > 32000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 15000 && R_flex < 32000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 40000) strncpy(estado_out, "maximo", len);
-        else if (R_flex > 11000 && R_flex < 15000) strncpy(estado_out, "recto", len);
-        else strncpy(estado_out, "desconocido", len); 
-    } else if  (flex_idx == 2) { // ANULAR N° 7 
-        if (R_flex < 14500 && R_flex > 10000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 7000 && R_flex < 10000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 5000 && R_flex < 7000) strncpy(estado_out, "recto", len);
-        else strncpy(estado_out, "desconocido", len);
-    } else if (flex_idx == 3) { // GORDO N° 11
-        if (R_flex < 67000 && R_flex > 58000 ) strncpy(estado_out, "muy flexionado", len);
-        else if (R_flex > 20000 && R_flex < 58000) strncpy(estado_out, "medio", len);
-        else if (R_flex > 67000) strncpy(estado_out, "maximo", len);
-        else if (R_flex > 13000 && R_flex < 20000) strncpy(estado_out, "recto", len);
-        else strncpy(estado_out, "desconocido", len);
-    }
+    // Guardar el valor crudo de resistencia como string entero
+    snprintf(estado_out, len, "%d", (int)R_flex);
 }
 
 static void mpu6050_task(void *arg) {
     float ax, ay, az, gx, gy, gz, ang_x, ang_y, ang_z;
     last_time_us = esp_timer_get_time();
     while (1) {
-        char notify_msg[32] = {0};
-        bool send = false;
 
-        get_sensor_data(&ax, &ay, &az, &gx, &gy, &gz, &ang_x, &ang_y, &ang_z);
+    // Obtener valores crudos de ángulo y armar mensaje tipo: MPU6050: x=120, y=300, z=90
+    char notify_msg[64];
+    snprintf(notify_msg, sizeof(notify_msg), "MPU6050: x=%.0f, y=%.0f, z=%.0f", ang_x, ang_y, ang_z);
+    bool send = true;
 
-        // --- LÓGICA DE GESTOS (NO TOCAR, ya está bien) ---
-        bool is_x_centered = (ang_x <= THRESHOLD_CENTERED_RANGE || ang_x >= (360.0f - THRESHOLD_CENTERED_RANGE));
-        bool is_y_centered = (ang_y >= (180.0f - THRESHOLD_CENTERED_RANGE) && ang_y <= (180.0f + THRESHOLD_CENTERED_RANGE));
-        if (is_x_centered && is_y_centered) {
-            if (!msg_hand_centered_triggered) {
-                strcpy(notify_msg, "MANO_CENTRADA");
-                send = true;
-                msg_hand_centered_triggered = true;
-                msg_hand_reverse_triggered = false;
-                msg_x_right_triggered = false;
-                msg_x_left_triggered = false;
-                msg_y_forward_triggered = false;
-                msg_y_backward_triggered = false;
-            }
-        } else {
-            msg_hand_centered_triggered = false;
-        }
 
-        bool is_x_reverse = (ang_x >= (180.0f - THRESHOLD_REVERSE_RANGE) && ang_x <= (180.0f + THRESHOLD_REVERSE_RANGE));
-        bool is_y_reverse = (ang_y <= THRESHOLD_REVERSE_RANGE || ang_y >= (360.0f - THRESHOLD_REVERSE_RANGE));
-        if (is_x_reverse && is_y_reverse) {
-            if (!msg_hand_reverse_triggered) {
-                strcpy(notify_msg, "MANO_REVES");
-                send = true;
-                msg_hand_reverse_triggered = true;
-                msg_hand_centered_triggered = false;
-                msg_x_right_triggered = false;
-                msg_x_left_triggered = false;
-                msg_y_forward_triggered = false;
-                msg_y_backward_triggered = false;
-            }
-        } else {
-            msg_hand_reverse_triggered = false;
-        }
+    char estado_flex[5][20];
+    leer_estado_flex(0, FLEX0_CHANNEL, cali_handle[0], estado_flex[0], sizeof(estado_flex[0]));
+    leer_estado_flex(1, FLEX1_CHANNEL, cali_handle[1], estado_flex[1], sizeof(estado_flex[1]));
+    leer_estado_flex(2, FLEX2_CHANNEL, cali_handle[2], estado_flex[2], sizeof(estado_flex[2]));
+    leer_estado_flex(3, FLEX3_CHANNEL, cali_handle[3], estado_flex[3], sizeof(estado_flex[3]));
+    leer_estado_flex(4, FLEX4_CHANNEL, cali_handle[4], estado_flex[4], sizeof(estado_flex[4]));
 
-        if (!msg_hand_centered_triggered && !msg_hand_reverse_triggered) {
-            // Solo activar lateral si no está centrada ni al revés
-            if (ang_x >= THRESHOLD_X_RIGHT && ang_x < 180.0f) {
-                if (!msg_x_right_triggered) {
-                    strcpy(notify_msg, "MANO_IZQUIERDA");
-                    send = true;
-                    msg_x_right_triggered = true;
-                }
-            } else {
-                msg_x_right_triggered = false;
-            }
-            if (ang_x <= THRESHOLD_X_LEFT && ang_x > 180.0f) {
-                if (!msg_x_left_triggered) {
-                    strcpy(notify_msg, "MANO_DERECHA");
-                    send = true;
-                    msg_x_left_triggered = true;
-                }
-            } else {
-                msg_x_left_triggered = false;
-            }
-            // Solo activar adelante/atrás si no está centrada ni al revés
-            if (ang_y >= THRESHOLD_Y_FORWARD && ang_y < 180.0f) {
-                if (!msg_y_forward_triggered) {
-                    strcpy(notify_msg, "MANO_ADELANTE");
-                    send = true;
-                    msg_y_forward_triggered = true;
-                }
-            } else {
-                msg_y_forward_triggered = false;
-            }
-            if (ang_y <= THRESHOLD_Y_BACKWARD && ang_y > 180.0f) {
-                if (!msg_y_backward_triggered) {
-                    strcpy(notify_msg, "MANO_ATRAS");
-                    send = true;
-                    msg_y_backward_triggered = true;
-                }
-            } else {
-                msg_y_backward_triggered = false;
-            }
-        }
-
-        // Lógica para el Eje Z (Yaw de la mano) - Rotación de la muñeca
-        if (ang_z >= THRESHOLD_Z_90 && ang_z < THRESHOLD_Z_180) {
-            if (!msg_z_90_triggered) {
-                strcpy(notify_msg, "Z_90");
-                send = true;
-                msg_z_90_triggered = true;
-            }
-        } else {
-            msg_z_90_triggered = false;
-        }
-        if (ang_z >= THRESHOLD_Z_180 && ang_z < THRESHOLD_Z_270) {
-            if (!msg_z_180_triggered) {
-                strcpy(notify_msg, "Z_180");
-                send = true;
-                msg_z_180_triggered = true;
-            }
-        } else {
-            msg_z_180_triggered = false;
-        }
-        if (ang_z >= THRESHOLD_Z_270) {
-            if (!msg_z_270_triggered) {
-                strcpy(notify_msg, "Z_270");
-                send = true;
-                msg_z_270_triggered = true;
-            }
-        } else if (ang_z < THRESHOLD_Z_270 && msg_z_270_triggered) {
-            msg_z_270_triggered = false;
-        }
-
-        char estado_flex[5][20];
-        leer_estado_flex(0, FLEX0_CHANNEL, cali_handle[0], estado_flex[0], sizeof(estado_flex[0]));
-        leer_estado_flex(1, FLEX1_CHANNEL, cali_handle[1], estado_flex[1], sizeof(estado_flex[1]));
-        leer_estado_flex(2, FLEX2_CHANNEL, cali_handle[2], estado_flex[2], sizeof(estado_flex[2]));
-        leer_estado_flex(3, FLEX3_CHANNEL, cali_handle[3], estado_flex[3], sizeof(estado_flex[3]));
-        leer_estado_flex(4, FLEX4_CHANNEL, cali_handle[4], estado_flex[4], sizeof(estado_flex[4]));
-
-        // Detectar si cambió el gesto o algún flex
+        // Solo enviar si cambió algún flex o los valores del MPU6050
         bool flex_cambio = false;
         for (int i = 0; i < 5; i++) {
             if (strcmp(estado_flex[i], ultimo_estado_flex[i]) != 0) {
@@ -483,16 +350,15 @@ static void mpu6050_task(void *arg) {
                 break;
             }
         }
-        bool gesto_cambio = (strcmp(notify_msg, ultimo_gesto) != 0);
+        bool mpu_cambio = (strcmp(notify_msg, ultimo_gesto) != 0);
 
-        // Solo enviar si cambió el gesto o algún flex
-        if ((send || flex_cambio) && mpu_gatts_if != 0 && mpu_char_handle != 0) {
+        if ((send || flex_cambio || mpu_cambio) && mpu_gatts_if != 0 && mpu_char_handle != 0) {
             char mensaje_ble[256];
             snprintf(mensaje_ble, sizeof(mensaje_ble),
                 "%s | Indice:%s Mayor:%s Anular:%s Gordo:%s Meñique:%s",
                 notify_msg, estado_flex[0], estado_flex[1], estado_flex[2], estado_flex[3], estado_flex[4]);
 
-            ESP_LOGI(MPU_TAG, "Gesto+Flex: %s", mensaje_ble);
+            ESP_LOGI(MPU_TAG, "MPU+Flex: %s", mensaje_ble);
 
             esp_err_t err = esp_ble_gatts_send_indicate(
                 mpu_gatts_if,
