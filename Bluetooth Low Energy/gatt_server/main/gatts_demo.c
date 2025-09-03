@@ -1,5 +1,4 @@
-// CODIGO BLE FUNCIONAL CON SENSADO DE LOS GESTOS DE LA MANO y SENSORES FLEX.
-// El servidor se inicia, el cliente (celular) entra a este servidor del ESP32 y cuando activa las notificaciones este puede ver el sensado de los valores en hexadecimal, mientras que en el monitor serie se ve que movmiento es.
+// CODIGO BLE FUNCIONAL CON SENSADO DE LOS GESTOS DE LA MANO (HAY QUE ACTUALIZARLO)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -167,7 +166,7 @@ static prepare_type_env_t b_prepare_write_env;
 #define I2C_MASTER_NUM       0
 #define I2C_MASTER_FREQ_HZ   400000
 
-#define MPU6050_ADDR         0x68
+#define MPU6050_ADDR         0x69
 #define PWR_MGMT_1           0x6B
 #define ACCEL_XOUT_H         0x3B
 #define ACCEL_YOUT_H         0x3D
