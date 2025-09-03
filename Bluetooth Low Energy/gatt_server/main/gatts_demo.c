@@ -328,11 +328,11 @@ static void mpu6050_task(void *arg) {
     float ax, ay, az, gx, gy, gz, ang_x, ang_y, ang_z;
     last_time_us = esp_timer_get_time();
     while (1) {
-
-    // Obtener valores crudos de ángulo y armar mensaje tipo: MPU6050: x=120, y=300, z=90
-    char notify_msg[64];
-    snprintf(notify_msg, sizeof(notify_msg), "MPU6050: x=%.0f, y=%.0f, z=%.0f", ang_x, ang_y, ang_z);
-    bool send = true;
+        // Obtener valores crudos de ángulo y armar mensaje tipo: MPU6050: x=120, y=300, z=90
+        get_sensor_data(&ax, &ay, &az, &gx, &gy, &gz, &ang_x, &ang_y, &ang_z);
+        char notify_msg[64];
+        snprintf(notify_msg, sizeof(notify_msg), "MPU6050: x=%.0f, y=%.0f, z=%.0f", ang_x, ang_y, ang_z);
+        bool send = true;
 
 
     char estado_flex[5][20];
