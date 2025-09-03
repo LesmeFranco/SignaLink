@@ -265,11 +265,7 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
         break;
     }
     case ESP_GATTC_NOTIFY_EVT:
-        if (p_data->notify.is_notify){
-            ESP_LOGI(GATTC_TAG, "Notification received");
-        }else{
-            ESP_LOGI(GATTC_TAG, "Indication received");
-        }
+  
         print_string_from_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
         break;
     case ESP_GATTC_WRITE_DESCR_EVT:
