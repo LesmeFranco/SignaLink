@@ -1,5 +1,5 @@
 <div align="center">
-<img src="Imagenes/readme/Logo.png" alt="Logo proyecto" width="20%"/>
+<img src="Imagenes/Logos/Logo.png" alt="Logo proyecto" width="20%"/>
 </div>
 
 <div align="center">
