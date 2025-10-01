@@ -1,9 +1,19 @@
-# Proyecto de Diseño de Placas con KiCad
+# Carpeta de Trabajo - Diseño de Placas 
 
 Utilizamos **KiCad** para el diseño de circuitos impresos (PCB). Llevamos con esta aplicacion la creacion de dos PCBs:
 
-- Modulo de la muñeca: el diseño de la placa esta adaptado a una medida de 35mm x 45mm, de forma que podamos hacer la placa lo mas simple posible para el funcionamiento y el sensado perfecto de los gestos de la mano. 
+## Módulo Muñeca
 
+El diseño de la placa está optimizado en un formato compacto de 35 mm por 45 mm, lo que permite reducir al máximo su tamaño sin afectar el rendimiento. Su objetivo principal es garantizar un sensado preciso de los gestos de la mano, combinando comodidad de uso con eficiencia en la interpretación de movimientos. 
+
+El módulo integra un ESP32-C3 Super Mini como microcontrolador central, acompañado por el chip MPU6050 para la detección de aceleración y giro, una pantalla OLED SSD1306 para la visualización de información en tiempo real, sensores flexibles que registran la flexión de los dedos y un módulo de carga USB que facilita la autonomía energética y la recarga de Batería Lipo. Gracias a esta integración, el sistema se presenta como una solución ligera, compacta y confiable para la captura e interpretación de gestos manuales.
+
+- PCB del Modulo de la muñeca:
+<div align="center">
+<img src="Imagenes/pcb_modmuñeca.png" alt="" width= "40%" height= "35%"/>
+</div>
+
+- Placa desarrollada:
 <div align="center">
 <img src="Imagenes/placa_muñeca_frente.jpg" alt="" width= "40%" height= "35%"/>
 </div
@@ -12,5 +22,20 @@ Utilizamos **KiCad** para el diseño de circuitos impresos (PCB). Llevamos con e
 <img src="Imagenes/placa_muñeca_reves.jpg" alt="" width= "40%" height= "35%"/>
 </div>
 
-- Modulo del pecho: esta placa es el cerebro de SignaLink. La hemos llevado a cabo por la migracion a una Raspberry Compute Moduele 4. Dentro de ella, se encajaran los sensores necesarios para el filtrado de datos y permitir la comunación MQTT. 
+## Modulo Pecho: 
 
+El módulo del pecho constituye el núcleo de procesamiento de SignaLink. En su diseño se integra una Raspberry Pi Compute Module 4 (RCM4), que actúa como el procesador principal encargado de coordinar y analizar la información proveniente de los demás periféricos. Esta capacidad de cómputo permite realizar el filtrado de datos en tiempo real y gestionar la comunicación con el resto del sistema a través del protocolo MQTT, asegurando una transmisión eficiente y confiable.
+
+Además de la RCM4, la placa incorpora un DAC con amplificador PAM junto con los conectores para parlante, lo que posibilita la conversión de gestos a audio de manera clara y directa. Gracias a esta integración, el sistema no solo traduce los movimientos capturados en datos procesables, sino que también ofrece la salida de voz que convierte las señas en un medio de comunicación audible.
+
+De esta forma, el módulo del pecho se consolida como el cerebro y la voz de SignaLink, combinando procesamiento, conectividad y salida de audio en una sola unidad compacta y eficiente.
+
+- PCB del Modulo del pecho:
+<div align="center">
+<img src="Imagenes/pcb_modmuñeca.png" alt="" width= "40%" height= "35%"/>
+</div>
+
+- Placa desarrollada:
+<div align="center">
+<img src="Imagenes/pcb_modmuñeca.png" alt="" width= "40%" height= "35%"/>
+</div>
