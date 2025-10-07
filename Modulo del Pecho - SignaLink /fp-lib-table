@@ -1,5 +1,0 @@
-(fp_lib_table
-  (version 7)
-  (lib (name "Raspberry Compute Modele 4")(type "KiCad")(uri "/Users/lorenzo.poggi/Downloads/SC0682")(options "")(descr ""))
-  (lib (name "Amplificador")(type "KiCad")(uri "/Users/lorenzo.poggi/Documents/KiCad/Biblioteca de Simbolos/Amplificador.pretty")(options "")(descr ""))
-)
