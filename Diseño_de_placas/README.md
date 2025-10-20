@@ -4,23 +4,31 @@ Utilizamos **KiCad** para el diseño de circuitos impresos (PCB). Llevamos con e
 
 ## Módulo Muñeca
 
-El diseño de la placa está optimizado en un formato compacto de 35 mm por 45 mm, lo que permite reducir al máximo su tamaño sin afectar el rendimiento. Su objetivo principal es garantizar un sensado preciso de los gestos de la mano, combinando comodidad de uso con eficiencia en la interpretación de movimientos. 
+El diseño de la placa está optimizado en un formato compacto de 30 mm por 50 mm, lo que permite reducir al máximo su tamaño sin afectar el rendimiento. Su objetivo principal es garantizar un sensado preciso de los gestos de la mano, combinando comodidad de uso con eficiencia en la interpretación de movimientos. 
 
 El módulo integra un ESP32-C3 Super Mini como microcontrolador central, acompañado por el chip MPU6050 para la detección de aceleración y giro, una pantalla OLED SSD1306 para la visualización de información en tiempo real, sensores flexibles que registran la flexión de los dedos y un módulo de carga USB que facilita la autonomía energética y la recarga de Batería Lipo. Gracias a esta integración, el sistema se presenta como una solución ligera, compacta y confiable para la captura e interpretación de gestos manuales.
 
-- PCB del Modulo de la muñeca:
+- Diseño 3D:
 <div align="center">
-<img src="Imagenes/pcb_modmuñeca.png" alt="" width= "40%" height= "35%"/>
+<img src="Modulo_Muñeca/Diseño_3D.png" alt="" width= "70%" height= "50%"/>
 </div>
 
-- Placa desarrollada:
+- Esquemático
 <div align="center">
-<img src="Imagenes/placa_muñeca_frente.jpg" alt="" width= "40%" height= "35%"/>
+<img src="Modulo_Muñeca/Esquematico.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Diseño de placa sin plano de masa
+<div align="center">
+<img src="Modulo_Muñeca/Editor_de_placa_sin_plano_de_masa.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Diseño de placa con plano de masa:
+<div align="center">
+<img src="Modulo_Muñeca/Editor_de_placa.png" alt="" width= "70%" height= "50%"/>
 </div
 
-<div align="center">
-<img src="Imagenes/placa_muñeca_reves.jpg" alt="" width= "40%" height= "35%"/>
-</div>
+
 
 ## Modulo Pecho: 
 
