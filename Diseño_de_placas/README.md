@@ -38,12 +38,22 @@ Además de la RCM4, la placa incorpora un DAC con amplificador PAM junto con los
 
 De esta forma, el módulo del pecho se consolida como el cerebro y la voz de SignaLink, combinando procesamiento, conectividad y salida de audio en una sola unidad compacta y eficiente.
 
-- PCB del Modulo del pecho:
+- Diseño 3D:
 <div align="center">
-<img src="Imagenes/pcb_modmuñeca.png" alt="" width= "40%" height= "35%"/>
+<img src="Modulo_Pecho/Diseño_3D_derecho.png" alt="" width= "70%" height= "50%"/>
 </div>
 
-- Placa desarrollada:
+- Diseño 3D:
 <div align="center">
-<img src="Imagenes/pcb_modmuñeca.png" alt="" width= "40%" height= "35%"/>
+<img src="Modulo_Pecho/Diseño_3D_reves.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Esquemático
+<div align="center">
+<img src="Modulo_Pecho/Esquematico.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Diseño de placa sin plano de masa
+<div align="center">
+<img src="Modulo_Pecho/Editor_de_placa.png" alt="" width= "70%" height= "50%"/>
 </div>
