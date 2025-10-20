@@ -8,25 +8,51 @@ El diseño de la placa está optimizado en un formato compacto de 30 mm por 50 m
 
 El módulo integra un ESP32-C3 Super Mini como microcontrolador central, acompañado por el chip MPU6050 para la detección de aceleración y giro, una pantalla OLED SSD1306 para la visualización de información en tiempo real, sensores flexibles que registran la flexión de los dedos y un módulo de carga USB que facilita la autonomía energética y la recarga de Batería Lipo. Gracias a esta integración, el sistema se presenta como una solución ligera, compacta y confiable para la captura e interpretación de gestos manuales.
 
+<h3>Mano Izquierda</h3>
+
 - Diseño 3D:
 <div align="center">
-<img src="Modulo_Muñeca/Diseño_3D.png" alt="" width= "70%" height= "50%"/>
+<img src="Modulo_Muñeca/Mano_izquierda/Diseño_3D.png" alt="" width= "70%" height= "50%"/>
 </div>
 
 - Esquemático
 <div align="center">
-<img src="Modulo_Muñeca/Esquematico.png" alt="" width= "70%" height= "50%"/>
+<img src="Modulo_Muñeca/Mano_izquierda/Esquematico.png" alt="" width= "70%" height= "50%"/>
 </div>
 
 - Diseño de placa sin plano de masa
 <div align="center">
-<img src="Modulo_Muñeca/Editor_de_placa_sin_plano_de_masa.png" alt="" width= "70%" height= "50%"/>
+<img src="Modulo_Muñeca/Mano_izquierda/Editor_de_placa_sin_plano_de_masa.png" alt="" width= "70%" height= "50%"/>
 </div>
 
 - Diseño de placa con plano de masa:
 <div align="center">
-<img src="Modulo_Muñeca/Editor_de_placa.png" alt="" width= "70%" height= "50%"/>
-</div
+<img src="Modulo_Muñeca/Mano_izquierda/Editor_de_placa.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+
+<h3>Mano Derecha</h3>
+
+- Diseño 3D:
+<div align="center">
+<img src="Modulo_Muñeca/Mano_derecha/Diseño_3D.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Esquemático
+<div align="center">
+<img src="Modulo_Muñeca/Mano_derecha/Esquematico.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Diseño de placa sin plano de masa
+<div align="center">
+<img src="Modulo_Muñeca/Mano_derecha/Editor_de_placa_sin_plano_de_masa.png" alt="" width= "70%" height= "50%"/>
+</div>
+
+- Diseño de placa con plano de masa:
+<div align="center">
+<img src="Modulo_Muñeca/Mano_derecha/Editor_de_placa.png" alt="" width= "70%" height= "50%"/>
+</div>
+
 
 
 
